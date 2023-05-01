@@ -1,0 +1,4 @@
+name = "SatelliteToolboxLegendre"
+uuid = "7fa26607-a272-47b2-9aa2-a6c1d419d9d2"
+authors = ["Ronan Arraes Jardim Chagas <ronisbr@gmail.com>"]
+version = "0.1.0"
