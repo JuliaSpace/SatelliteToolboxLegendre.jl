@@ -3,8 +3,7 @@
 # Description
 # ==========================================================================================
 #
-#   Functions related to the first-order derivative of associated Legendre
-#   functions.
+#   Functions related to the first-order derivative of associated Legendre functions.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 #

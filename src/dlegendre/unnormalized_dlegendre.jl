@@ -160,7 +160,7 @@ function unnormalized_dlegendre(
     # First, compute the matrix with the associated Legendre functions.
     P = unnormalized_legendre(ϕ, n_max_P, m_max_P; ph_term = ph_term)
 
-    # Now, compute and return the time-derivative of the associated Legendre functions.
+    # Now, compute and return the derivative of the associated Legendre functions.
     dP = zeros(float(T), n_max + 1, m_max + 1)
     unnormalized_dlegendre!(dP, ϕ, P; ph_term = ph_term)
 

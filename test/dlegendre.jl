@@ -4,7 +4,7 @@
 # ==========================================================================================
 #
 #   Tests related to the functions to create the matrices with the values of the Legendre
-#   associated function time-derivatives.
+#   associated function derivatives.
 #
 # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
 

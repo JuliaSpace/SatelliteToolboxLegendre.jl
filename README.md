@@ -6,7 +6,7 @@ SatelliteToolboxLegendre.jl
 [![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-4495d1.svg)](https://github.com/invenia/BlueStyle)
 
 This package contains function to compute the Legendre associated functions and its
-time-derivatives for the models in the **SatelliteToolbox.jl** ecosystem.
+derivatives for the models in the **SatelliteToolbox.jl** ecosystem.
 
 ## Installation
 
@@ -90,9 +90,9 @@ This function has the following keywords:
 - `ph_term::Bool`: If `true`, then the Condon-Shortley phase term `(-1)^m` will be included.
     (**Default** = `false`)
     
-### Time-Derivative of the Legendre Associated Functions
+### Derivative of the Legendre Associated Functions
     
-This package exports two methods to compute the time-derivative of the Legendre associated
+This package exports two methods to compute the derivative of the Legendre associated
 functions: `dlegendre` and `dlegendre!`.
     
     dlegendre(N, ϕ::T, n_max::Integer, m_max::Integer = -1; kwargs...) where T<:Number -> Matrix{float(T)}, Matrix{float(T)}
