@@ -106,6 +106,19 @@
     @test result ≈ expected
     @test eltype(result) == Float64
 
+    expected = [
+         0.0                 0.0                0.0                0.0
+        -0.12269009002431533 0.9924450321351935 0.0                0.0
+        -0.36528951101055424 2.909682850858952  0.7305790220211085 0.0
+        -0.7222892661973235  5.618539670379986  3.5975950570380495 0.6722610448623454
+    ]
+
+    P = legendre(Val(:unnormalized), 0.123, 4, 4)
+    result = zeros(Float64, 4, 4)
+    dlegendre!(Val(:unnormalized), result, 0.123, P, 10, 20)
+    @test result ≈ expected
+    @test eltype(result) == Float64
+
     # Float32
     # ======================================================================================
 
@@ -213,6 +226,19 @@ end
     @test result ≈ expected
     @test eltype(result) == Float64
 
+    expected = [
+         0.0                 0.0                0.0                 0.0
+        -0.12269009002431533 0.9924450321351935 0.0                 0.0
+        -0.36528951101055424 1.6799061771998531 0.21089999751409028 0.0
+        -0.7222892661973236  2.293759215336026  0.46444752474354967 0.03543126806616079
+    ]
+
+    P = legendre(Val(:schmidt), 0.123, 4, 4)
+    result = zeros(Float64, 4, 4)
+    dlegendre!(Val(:schmidt), result, 0.123, P, 10, 20)
+    @test result ≈ expected
+    @test eltype(result) == Float64
+
     # Float32
     # ======================================================================================
 
@@ -317,6 +343,19 @@ end
     P = legendre(Val(:full), 0.123, 3, 2)
     result = zeros(Float64, 4, 4)
     dlegendre!(Val(:full), result, 0.123, P, 3, 1)
+    @test result ≈ expected
+    @test eltype(result) == Float64
+
+    expected = [
+         0.0                0.0                0.0                0.0
+        -0.2125054695073136 1.7189652193774823 0.0                0.0
+        -0.816812178087257  3.7563844080406796 0.4715867308960424 0.0
+        -1.9109977730094496 6.068716451241777  1.2288126475109502 0.09374232393872588
+    ]
+
+    P = legendre(Val(:full), 0.123, 4, 4)
+    result = zeros(Float64, 4, 4)
+    dlegendre!(Val(:full), result, 0.123, P, 10, 20)
     @test result ≈ expected
     @test eltype(result) == Float64
 
