@@ -3,7 +3,7 @@ uuid = "7fa26607-a272-47b2-9aa2-a6c1d419d9d2"
 license = "MIT"
 desc = "Methods to compute Legendre associated functions and their time-derivatives."
 authors = ["Ronan Arraes Jardim Chagas <ronisbr@gmail.com>"]
-version = "0.0.1"
+version = "0.1.0"
 
 [compat]
 julia = "1.6"
