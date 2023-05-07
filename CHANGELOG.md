@@ -1,6 +1,15 @@
 SatelliteToolboxLegendre.jl Changelog
 =====================================
 
+Version 1.0.0
+-------------
+
+- ![Enhancement][badge-enhancement] The documentation received some minor improvements.
+- ![Info][badge-info] This algorithm has been stable in **SatelliteToolbox.jl** for over six
+  years. Hence, we are setting the current version as 1.0.0. The API modifications from the
+  current version in **SatelliteToolbox.jl** are breaking but subtle. Therefore, we do not
+  expect any problems.
+
 Version 0.1.0
 -------------
 
