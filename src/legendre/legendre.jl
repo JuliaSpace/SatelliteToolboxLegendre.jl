@@ -48,7 +48,7 @@ The parameter `N` selects the normalization. The following values are valid:
 
 # Keywords
 
-- `ph_term::Bool`: If `true`, then the Condon-Shortley phase term `(-1)^m` will be included.
+- `ph_term::Bool`: If `true`, the Condon-Shortley phase term `(-1)^m` will be included.
     (**Default** = `false`)
 
 # Remarks
@@ -145,7 +145,7 @@ The parameter `N` selects the normalization. The following values are valid:
 
 # Keywords
 
-- `ph_term::Bool`: If `true`, then the Condon-Shortley phase term `(-1)^m` will be included.
+- `ph_term::Bool`: If `true`, the Condon-Shortley phase term `(-1)^m` will be included.
     (**Default** = `false`)
 
 # Returns

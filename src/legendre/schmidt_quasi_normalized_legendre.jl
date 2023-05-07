@@ -33,7 +33,7 @@ The result will be stored at matrix `P`.
 
 # Keywords
 
-- `ph_term::Bool`: If `true`, then the Condon-Shortley phase term `(-1)^m` will be included.
+- `ph_term::Bool`: If `true`, the Condon-Shortley phase term `(-1)^m` will be included.
     (**Default** = `false`)
 
 # Remarks
@@ -137,7 +137,7 @@ that if `m_max` is higher than `n_max` or negative, it is set to `n_max`.
 
 # Keywords
 
-- `ph_term::Bool`: If `true`, then the Condon-Shortley phase term `(-1)^m` will be included.
+- `ph_term::Bool`: If `true`, the Condon-Shortley phase term `(-1)^m` will be included.
     (**Default** = `false`)
 
 # Returns

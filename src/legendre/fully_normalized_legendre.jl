@@ -35,7 +35,7 @@ The result will be stored in the matrix `P`.
 
 # Keywords
 
-- `ph_term::Bool`: If `true`, then the Condon-Shortley phase term `(-1)^m` will be included.
+- `ph_term::Bool`: If `true`, the Condon-Shortley phase term `(-1)^m` will be included.
     (**Default** = `false`)
 
 # Remarks
@@ -146,7 +146,7 @@ degree that will be computed is `n_max` and the maximum order is `m_max`. Notice
 
 # Keywords
 
-- `ph_term::Bool`: If `true`, then the Condon-Shortley phase term `(-1)^m` will be included.
+- `ph_term::Bool`: If `true`, the Condon-Shortley phase term `(-1)^m` will be included.
     (**Default** = `false`)
 
 # Returns

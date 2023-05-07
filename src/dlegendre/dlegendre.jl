@@ -24,7 +24,7 @@ export dlegendre!, dlegendre
 """
     dlegendre!(dP::AbstractMatrix, ϕ::Number, P::AbstractMatrix, n_max::Integer = -1, m_max::Integer = -1; kwargs...) -> Nothing
 
-Compute the first-order derivative of the associated Legendre function `P_n,m[x]` with
+Compute the first-order derivative of the associated Legendre function `P_n,m[cos(ϕ)]` with
 respect to `ϕ` [rad]:
 
     ∂P_n,m[cos(ϕ)]
@@ -55,7 +55,7 @@ using the same normalization `N`, which can be computed using the function
 
 # Keywords
 
-- `ph_term::Bool`: If `true`, then the Condon-Shortley phase term `(-1)^m` will be included.
+- `ph_term::Bool`: If `true`, the Condon-Shortley phase term `(-1)^m` will be included.
     (**Default** = `false`)
 """
 function dlegendre!(
@@ -97,8 +97,8 @@ end
 """
     dlegendre(N, ϕ::T, n_max::Integer, m_max::Integer = -1; kwargs...) where T<:Number -> Matrix{float(T)}, Matrix{float(T)}
 
-Compute the first-order derivative of the associated Legendre function `P_n,m[cos(ϕ)]`
-with respect to `ϕ` [rad]:
+Compute the first-order derivative of the associated Legendre function `P_n,m[cos(ϕ)]` with
+respect to `ϕ` [rad]:
 
     ∂P_n,m[cos(ϕ)]
     ──────────────
@@ -115,7 +115,7 @@ The parameter `N` selects the normalization. The following values are valid:
 
 # Keywords
 
-- `ph_term::Bool`: If `true`, then the Condon-Shortley phase term `(-1)^m` will be included.
+- `ph_term::Bool`: If `true`, the Condon-Shortley phase term `(-1)^m` will be included.
     (**Default** = `false`)
 
 # Returns

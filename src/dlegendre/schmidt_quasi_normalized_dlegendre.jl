@@ -36,7 +36,7 @@ associated Legendre function. This can be computed using the function
 
 # Keywords
 
-- `ph_term::Bool`: If `true`, then the Condon-Shortley phase term `(-1)^m` will be included.
+- `ph_term::Bool`: If `true`, the Condon-Shortley phase term `(-1)^m` will be included.
     (**Default** = `false`)
 """
 function schmidt_quasi_normalized_dlegendre!(
@@ -68,7 +68,7 @@ that if `m_max` is higher than `n_max` or negative (default), it is set to `n_ma
 
 # Keywords
 
-- `ph_term::Bool`: If `true`, then the Condon-Shortley phase term `(-1)^m` will be included.
+- `ph_term::Bool`: If `true`, the Condon-Shortley phase term `(-1)^m` will be included.
     (**Default** = `false`)
 
 # Returns
