@@ -24,9 +24,9 @@ and `legendre!`.
 
     legendre(N, ϕ::T, n_max::Integer, m_max::Integer = -1; ph_term::Bool = false) where T<:Number -> Matrix{float(T)}
 
-Compute the associated Legendre function `P_n,m[cos(ϕ)]`. The maximum degree that will be
-computed is `n_max` and the maximum order is `m_max`. Notice that if `m_max` is higher than
-`n_max` or negative (default), it is set to `n_max`.
+Compute the associated Legendre function $P_{n,m}\left[\cos(\phi)\right]$. The maximum
+degree that will be computed is `n_max` and the maximum order is `m_max`. Notice that if
+`m_max` is higher than `n_max` or negative (default), it is set to `n_max`.
 
 The parameter `N` selects the normalization. The following values are valid:
 
@@ -36,10 +36,11 @@ The parameter `N` selects the normalization. The following values are valid:
 
 This function has the following keywords:
 
-- `ph_term::Bool`: If `true`, then the Condon-Shortley phase term `(-1)^m` will be included.
+- `ph_term::Bool`: If `true`, the Condon-Shortley phase term $(-1)^m$ will be included.
     (**Default** = `false`)
 
-It returns a `Matrix{float(T)}` with the Legendre associated functions `P_n,m[cos(ϕ)]`.
+It returns a `Matrix{float(T)}` with the Legendre associated functions
+$P_{n,m}\left[\cos(\phi)\right]$.
 
 ```julia
 julia> legendre(Val(:unnormalized), 0.45, 4)
@@ -69,9 +70,9 @@ julia> legendre(Val(:full), 0.45, 4, 1)
 
     legendre!(N, P::AbstractMatrix, ϕ::Number, n_max::Integer = -1, m_max::Integer = -1; kwargs...) -> Nothing
 
-Compute the associated Legendre function `P_n,m[cos(ϕ)]`. The maximum degree and order that
-will be computed are given by the parameters `n_max` and `m_max`. If they are negative
-(default), the dimensions of matrix `P` will be used:
+Compute the associated Legendre function $P_{n,m}\left[\cos(\phi)\right]$. The maximum
+degree and order that will be computed are given by the parameters `n_max` and `m_max`. If
+they are negative (default), the dimensions of matrix `P` will be used:
 
     maximum degree -> number of rows - 1
     maximum order  -> number of columns - 1
@@ -87,7 +88,7 @@ The parameter `N` selects the normalization. The following values are valid:
 
 This function has the following keywords:
 
-- `ph_term::Bool`: If `true`, then the Condon-Shortley phase term `(-1)^m` will be included.
+- `ph_term::Bool`: If `true`, the Condon-Shortley phase term $(-1)^m$ will be included.
     (**Default** = `false`)
     
 ### Derivative of the Legendre Associated Functions
@@ -97,12 +98,10 @@ functions: `dlegendre` and `dlegendre!`.
     
     dlegendre(N, ϕ::T, n_max::Integer, m_max::Integer = -1; kwargs...) where T<:Number -> Matrix{float(T)}, Matrix{float(T)}
 
-Compute the first-order derivative of the associated Legendre function `P_n,m[cos(ϕ)]`
-with respect to `ϕ` [rad]:
+Compute the first-order derivative of the associated Legendre function
+$P_{n,m}\left[\cos(\phi)\right]$ with respect to `ϕ` [rad]:
 
-    ∂P_n,m[cos(ϕ)]
-    ──────────────
-         ∂ϕ
+$$\frac{\partial P_{n,m} \left[\cos(\phi)\right]}{\partial\phi}$$
 
 The maximum degree that will be computed is `n_max` and the maximum order is `m_max`. Notice
 that if `m_max` is higher than `n_max` or negative (default), it is set to `n_max`.
@@ -115,14 +114,15 @@ The parameter `N` selects the normalization. The following values are valid:
 
 This function has the following keywords:
 
-- `ph_term::Bool`: If `true`, then the Condon-Shortley phase term `(-1)^m` will be included.
+- `ph_term::Bool`: If `true`, the Condon-Shortley phase term $(-1)^m$ will be included.
     (**Default** = `false`)
 
 It returns the following objects:
 
 - `Matrix{float(T)}`: A matrix with the first-order derivative of the Legendre associated
-    functions `P_n,m[cos(ϕ)]`.
-- `Matrix{float(T)}`: A matrix with the Legendre associated functions `P_n,m[cos(ϕ)]`.
+    functions $P_{n,m}\left[\cos(\phi)\right]$.
+- `Matrix{float(T)}`: A matrix with the Legendre associated functions
+    $P_{n,m}\left[\cos(\phi)\right]$`.
 
 ```julia
 julia> dP, P = dlegendre(Val(:unnormalized), 0.45, 4)
@@ -182,12 +182,10 @@ julia> P
 
     dlegendre!(dP::AbstractMatrix, ϕ::Number, P::AbstractMatrix, n_max::Integer = -1, m_max::Integer = -1; kwargs...) -> Nothing
 
-Compute the first-order derivative of the associated Legendre function `P_n,m[x]` with
-respect to `ϕ` [rad]:
+Compute the first-order derivative of the associated Legendre function
+$P_{n,m}\left[\cos(\phi)\right]$ with respect to `ϕ` [rad]:
 
-    ∂P_n,m[cos(ϕ)]
-    ──────────────
-         ∂ϕ
+$$\frac{\partial P_{n,m} \left[\cos(\phi)\right]}{\partial\phi}$$
 
 The maximum degree and order that will be computed are given by the parameters `n_max` and
 `m_max`. If they are negative (default), the dimensions of matrix `dP` will be used:
@@ -213,7 +211,7 @@ using the same normalization `N`, which can be computed using the function `lege
 
 This function has the following keywords:
 
-- `ph_term::Bool`: If `true`, then the Condon-Shortley phase term `(-1)^m` will be included.
+- `ph_term::Bool`: If `true`, the Condon-Shortley phase term $(-1)^m$ will be included.
     (**Default** = `false`)
     
 ## Normalizations
@@ -223,29 +221,21 @@ This function has the following keywords:
 This algorithm was based on **[1]**. Our definition of fully normalized associated Legendre
 function can be seen in **[2, p. 546]**. The conversion is obtained by:
 
-             ┌                       ┐
-             │  (n-m)! . k . (2n+1)  │
-    K_n,m = √│ ───────────────────── │,  k = (m = 0) ? 1 : 2.
-             │         (n+m)!        │
-             └                       ┘
+$$K_{n,m} = \sqrt{k \cdot \frac{(n - m)! \cdot (2n + 1)}{(n + m)!}}~, k = \left\lbrace\begin{array}{cl} 1, & m = 0 \\ 2, & \mbox{otherwise}\end{array}\right.$$
 
-    P̄_n,m = P_n,m * K_n,m,
+$$\bar{P}_{n,m} = P_{n,m} * K_{n,m}~,$$
 
-where `P̄_n,m` is the fully normalized Legendre associated function.
+where $\bar{P}_{n,m}$ is the fully normalized Legendre associated function.
 
 ### Schmidt quasi-normalization
 
 This algorithm was based on **[3, 4]**. The conversion is obtained by:
 
-             ┌              ┐
-             │      (n-m)!  │
-    K_n,m = √│ k . ──────── │,  k = (m = 0) ? 1 : 2.
-             │      (n+m)!  │
-             └              ┘
+$$K_{n,m} = \sqrt{k \cdot \frac{(n - m)!}{(n + m)!}}~, k = \left\lbrace\begin{array}{cl} 1, & m = 0 \\ 2, & \mbox{otherwise}\end{array}\right.$$
 
-    P̂_n,m = P_n,m * K_n,m,
+$$\hat{P}_{n,m} = P_{n,m} * K_{n,m}~,$$
 
-where `P̂_n,m` is the Schmidt quasi-normalized Legendre associated function.
+where $\hat{P}_{n,m}$` is the Schmidt quasi-normalized Legendre associated function.
 
 ## References
 
