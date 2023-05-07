@@ -22,6 +22,8 @@ julia> Pkg.install("SatelliteToolboxLegendre")
 This package exports two methods to compute the Legendre associated functions: `legendre`
 and `legendre!`.
 
+---
+
     legendre(N, ϕ::T, n_max::Integer, m_max::Integer = -1; ph_term::Bool = false) where T<:Number -> Matrix{float(T)}
 
 Compute the associated Legendre function $P_{n,m}\left[\cos(\phi)\right]$. The maximum
@@ -68,6 +70,8 @@ julia> legendre(Val(:full), 0.45, 4, 1)
  0.631881  2.48543
 ```
 
+---
+
     legendre!(N, P::AbstractMatrix, ϕ::Number, n_max::Integer = -1, m_max::Integer = -1; kwargs...) -> Nothing
 
 Compute the associated Legendre function $P_{n,m}\left[\cos(\phi)\right]$. The maximum
@@ -95,11 +99,13 @@ This function has the following keywords:
     
 This package exports two methods to compute the derivative of the Legendre associated
 functions: `dlegendre` and `dlegendre!`.
+
+---
     
     dlegendre(N, ϕ::T, n_max::Integer, m_max::Integer = -1; kwargs...) where T<:Number -> Matrix{float(T)}, Matrix{float(T)}
 
 Compute the first-order derivative of the associated Legendre function
-$P_{n,m}\left[\cos(\phi)\right]$ with respect to `ϕ` [rad]:
+$P_{n,m}\left[\cos(\phi)\right]$ with respect to $\phi$ [rad]:
 
 $$\frac{\partial P_{n,m} \left[\cos(\phi)\right]}{\partial\phi}$$
 
@@ -180,10 +186,12 @@ julia> P
  0.631881  2.48543   1.48353
 ```
 
+---
+
     dlegendre!(dP::AbstractMatrix, ϕ::Number, P::AbstractMatrix, n_max::Integer = -1, m_max::Integer = -1; kwargs...) -> Nothing
 
 Compute the first-order derivative of the associated Legendre function
-$P_{n,m}\left[\cos(\phi)\right]$ with respect to `ϕ` [rad]:
+$P_{n,m}\left[\cos(\phi)\right]$ with respect to $\phi$ [rad]:
 
 $$\frac{\partial P_{n,m} \left[\cos(\phi)\right]}{\partial\phi}$$
 
@@ -221,21 +229,25 @@ This function has the following keywords:
 This algorithm was based on **[1]**. Our definition of fully normalized associated Legendre
 function can be seen in **[2, p. 546]**. The conversion is obtained by:
 
-$$K_{n,m} = \sqrt{k \cdot \frac{(n - m)! \cdot (2n + 1)}{(n + m)!}}~, k = \left\lbrace\begin{array}{cl} 1, & m = 0 \\ 2, & \mbox{otherwise}\end{array}\right.$$
+$$K_{n,m} = \sqrt{k \cdot \frac{(n - m)! \cdot (2n + 1)}{(n + m)!}}~,$$
 
-$$\bar{P}_{n,m} = P_{n,m} * K_{n,m}~,$$
+where $k = 1$ if $m = 0$ or $k = 2$ otherwise. Hence:
 
-where $\bar{P}_{n,m}$ is the fully normalized Legendre associated function.
+$$P^f_{n,m} = P_{n,m} \cdot K_{n,m}$$
+
+where $P^f_{n,m}$ is the fully normalized Legendre associated function.
 
 ### Schmidt quasi-normalization
 
 This algorithm was based on **[3, 4]**. The conversion is obtained by:
 
-$$K_{n,m} = \sqrt{k \cdot \frac{(n - m)!}{(n + m)!}}~, k = \left\lbrace\begin{array}{cl} 1, & m = 0 \\ 2, & \mbox{otherwise}\end{array}\right.$$
+$$K_{n,m} = \sqrt{k \cdot \frac{(n - m)!}{(n + m)!}}~,$$
 
-$$\hat{P}_{n,m} = P_{n,m} * K_{n,m}~,$$
+where $k = 1$ if $m = 0$ or $k = 2$ otherwise. Hence:
 
-where $\hat{P}_{n,m}$` is the Schmidt quasi-normalized Legendre associated function.
+$$P^s_{n,m} = P_{n,m} \cdot K_{n,m}$$
+
+where $P^s_{n,m}$ is the Schmidt quasi-normalized Legendre associated function.
 
 ## References
 
