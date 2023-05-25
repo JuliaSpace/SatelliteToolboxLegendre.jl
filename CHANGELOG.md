@@ -1,6 +1,12 @@
 SatelliteToolboxLegendre.jl Changelog
 =====================================
 
+Version 1.0.1
+-------------
+
+- ![Bugfix][badge-bugfix] Fix keyword argument when computing Legendre associated functions
+  with full normalization using the API.
+
 Version 1.0.0
 -------------
 
