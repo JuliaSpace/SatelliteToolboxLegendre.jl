@@ -102,7 +102,7 @@ function legendre!(
     P::AbstractMatrix,
     ϕ::Number,
     n_max::Integer = -1,
-    m_max::Integer = -1,
+    m_max::Integer = -1;
     ph_term::Bool = false
 )
     return fully_normalized_legendre!(P, ϕ, n_max, m_max; ph_term = ph_term)
