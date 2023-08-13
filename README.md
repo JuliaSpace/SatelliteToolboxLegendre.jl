@@ -17,7 +17,7 @@ derivatives for the models in the **SatelliteToolbox.jl** ecosystem.
 
 ```julia
 julia> using Pkg
-julia> Pkg.install("SatelliteToolboxLegendre")
+julia> Pkg.add("SatelliteToolboxLegendre")
 ```
 
 ## Usage
