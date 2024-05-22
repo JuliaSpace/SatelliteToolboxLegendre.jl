@@ -3,8 +3,7 @@
   <small><i>This package is part of the <a href="https://github.com/JuliaSpace/SatelliteToolbox.jl">SatelliteToolbox.jl</a> ecosystem.</i></small>
 </p>
 
-SatelliteToolboxLegendre.jl
-===========================
+# SatelliteToolboxLegendre.jl
 
 [![CI](https://github.com/JuliaSpace/SatelliteToolboxLegendre.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/JuliaSpace/SatelliteToolboxLegendre.jl/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/JuliaSpace/SatelliteToolboxLegendre.jl/branch/main/graph/badge.svg?token=AUE8ZZ5IXJ)](https://codecov.io/gh/JuliaSpace/SatelliteToolboxLegendre.jl)
@@ -29,7 +28,9 @@ and `legendre!`.
 
 ---
 
-    legendre(N, ϕ::T, n_max::Integer, m_max::Integer = -1; ph_term::Bool = false) where T<:Number -> Matrix{float(T)}
+```julia
+legendre(N, ϕ::T, n_max::Integer, m_max::Integer = -1; ph_term::Bool = false) where T<:Number -> Matrix{float(T)}
+```
 
 Compute the associated Legendre function $P_{n,m}\left[\cos(\phi)\right]$. The maximum
 degree that will be computed is `n_max` and the maximum order is `m_max`. Notice that if
@@ -77,7 +78,9 @@ julia> legendre(Val(:full), 0.45, 4, 1)
 
 ---
 
-    legendre!(N, P::AbstractMatrix, ϕ::Number, n_max::Integer = -1, m_max::Integer = -1; kwargs...) -> Nothing
+```julia
+legendre!(N, P::AbstractMatrix, ϕ::Number, n_max::Integer = -1, m_max::Integer = -1; kwargs...) -> Nothing
+```
 
 Compute the associated Legendre function $P_{n,m}\left[\cos(\phi)\right]$. The maximum
 degree and order that will be computed are given by the parameters `n_max` and `m_max`. If
@@ -99,15 +102,17 @@ This function has the following keywords:
 
 - `ph_term::Bool`: If `true`, the Condon-Shortley phase term $(-1)^m$ will be included.
     (**Default** = `false`)
-    
+
 ### Derivative of the Legendre Associated Functions
-    
+
 This package exports two methods to compute the derivative of the Legendre associated
 functions: `dlegendre` and `dlegendre!`.
 
 ---
-    
-    dlegendre(N, ϕ::T, n_max::Integer, m_max::Integer = -1; kwargs...) where T<:Number -> Matrix{float(T)}, Matrix{float(T)}
+
+```julia
+dlegendre(N, ϕ::T, n_max::Integer, m_max::Integer = -1; kwargs...) where T<:Number -> Matrix{float(T)}, Matrix{float(T)}
+```
 
 Compute the first-order derivative of the associated Legendre function
 $P_{n,m}\left[\cos(\phi)\right]$ with respect to $\phi$ [rad]:
@@ -193,7 +198,9 @@ julia> P
 
 ---
 
-    dlegendre!(dP::AbstractMatrix, ϕ::Number, P::AbstractMatrix, n_max::Integer = -1, m_max::Integer = -1; kwargs...) -> Nothing
+```julia
+dlegendre!(dP::AbstractMatrix, ϕ::Number, P::AbstractMatrix, n_max::Integer = -1, m_max::Integer = -1; kwargs...) -> Nothing
+```
 
 Compute the first-order derivative of the associated Legendre function
 $P_{n,m}\left[\cos(\phi)\right]$ with respect to $\phi$ [rad]:
@@ -226,7 +233,7 @@ This function has the following keywords:
 
 - `ph_term::Bool`: If `true`, the Condon-Shortley phase term $(-1)^m$ will be included.
     (**Default** = `false`)
-    
+
 ## Normalizations
 
 ### Full normalization
@@ -257,14 +264,11 @@ where $P^s_{n,m}$ is the Schmidt quasi-normalized Legendre associated function.
 ## References
 
 - **[1]** Holmes, S. A. and W. E. Featherstone, 2002. A unified approach to the Clenshaw
-    summation and the recursive computation of very high degree and order normalised
-    associated Legendre functions. Journal of Geodesy, 76(5), pp. 279-299. For more info.:
-    http://mitgcm.org/~mlosch/geoidcookbook/node11.html
-
+  summation and the recursive computation of very high degree and order normalised
+  associated Legendre functions. Journal of Geodesy, 76(5), pp. 279-299. For more info.:
+  http://mitgcm.org/~mlosch/geoidcookbook/node11.html
 - **[2]** Vallado, D. A (2013). Fundamentals of Astrodynamics and Applications. Microcosm
-    Press, Hawthorn, CA, USA.
-
+  Press, Hawthorn, CA, USA.
 - **[3]** Schmidt, A (1917). Erdmagnetismus, Enzykl. Math. Wiss., 6, pp. 265–396.
-
 - **[4]** Winch, D. E., Ivers, D. J., Turner, J. P. R., Stening R. J (2005). Geomagnetism
-    and Schmidt quasi-normalization. Geophysical Journal International, 160(2), pp. 487-504.
+  and Schmidt quasi-normalization. Geophysical Journal International, 160(2), pp. 487-504.
