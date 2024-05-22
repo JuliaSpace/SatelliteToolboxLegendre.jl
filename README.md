@@ -8,6 +8,7 @@
 [![CI](https://github.com/JuliaSpace/SatelliteToolboxLegendre.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/JuliaSpace/SatelliteToolboxLegendre.jl/actions/workflows/ci.yml)
 [![codecov](https://codecov.io/gh/JuliaSpace/SatelliteToolboxLegendre.jl/branch/main/graph/badge.svg?token=AUE8ZZ5IXJ)](https://codecov.io/gh/JuliaSpace/SatelliteToolboxLegendre.jl)
 [![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-4495d1.svg)](https://github.com/invenia/BlueStyle)
+[![DOI](https://zenodo.org/badge/634988889.svg)](https://zenodo.org/doi/10.5281/zenodo.11246481)
 
 This package contains function to compute the Legendre associated functions and its
 derivatives for the models in the **SatelliteToolbox.jl** ecosystem.
