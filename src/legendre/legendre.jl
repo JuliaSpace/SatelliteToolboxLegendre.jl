@@ -1,30 +1,24 @@
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+## Description #############################################################################
 #
-# Description
-# ==========================================================================================
+# Functions related to the associated Legendre functions.
 #
-#   Functions related to the associated Legendre functions.
+## References ##############################################################################
 #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# [1] Holmes, S. A. and W. E. Featherstone, 2002. A unified approach to the Clenshaw
+#     summation and the recursive computation of very high degree and order normalised
+#     associated Legendre functions. Journal of Geodesy, 76(5), pp. 279-299.
 #
-# References
-# ==========================================================================================
+#     For more info.: http://mitgcm.org/~mlosch/geoidcookbook/node11.html
 #
-#   [1] Holmes, S. A. and W. E. Featherstone, 2002. A unified approach to the Clenshaw
-#       summation and the recursive computation of very high degree and order normalised
-#       associated Legendre functions. Journal of Geodesy, 76(5), pp. 279-299.
+# [2] Vallado, D. A (2013). Fundamentals of Astrodynamics and Applications. Microcosm Press,
+#     Hawthorn, CA, USA.
 #
-#       For more info.: http://mitgcm.org/~mlosch/geoidcookbook/node11.html
+# [3] Schmidt, A (1917). Erdmagnetismus, Enzykl. Math. Wiss., 6, pp. 265–396.
 #
-#   [2] Vallado, D. A (2013). Fundamentals of Astrodynamics and Applications. Microcosm
-#       Press, Hawthorn, CA, USA.
+# [4] Winch, D. E., Ivers, D. J., Turner, J. P. R., Stening R. J (2005). Geomagnetism and
+#     Schmidt quasi-normalization. Geophysical Journal International, 160(2), pp. 487-504.
 #
-#   [3] Schmidt, A (1917). Erdmagnetismus, Enzykl. Math. Wiss., 6, pp. 265–396.
-#
-#   [4] Winch, D. E., Ivers, D. J., Turner, J. P. R., Stening R. J (2005). Geomagnetism and
-#       Schmidt quasi-normalization. Geophysical Journal International, 160(2), pp. 487-504.
-#
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+############################################################################################
 
 export legendre!, legendre
 

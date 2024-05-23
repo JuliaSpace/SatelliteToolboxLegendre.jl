@@ -1,22 +1,15 @@
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+## Description #############################################################################
 #
-# Description
-# ==========================================================================================
+# Compute the associated Legendre functions with the Schmidt quasi-normalization.
 #
-#   Compute the associated Legendre functions with the Schmidt quasi-normalization.
+## References ##############################################################################
 #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# [1] Schmidt, A (1917). Erdmagnetismus, Enzykl. Math. Wiss., 6, pp. 265–396.
 #
-# References
-# ==========================================================================================
+# [2] Winch, D. E., Ivers, D. J., Turner, J. P. R., Stening R. J (2005). Geomagnetism and
+#     Schmidt quasi-normalization. Geophysical Journal International, 160(2), pp. 487-504.
 #
-#   [1] Schmidt, A (1917). Erdmagnetismus, Enzykl. Math. Wiss., 6, pp. 265–396.
-#
-#   [2] Winch, D. E., Ivers, D. J., Turner, J. P. R., Stening R. J (2005).
-#       Geomagnetism and Schmidt quasi-normalization. Geophysical Journal
-#       International, 160(2), pp. 487-504.
-#
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+############################################################################################
 
 """
     schmidt_quasi_normalized_legendre!(P::AbstractMatrix{T}, ϕ::Number, n_max::Integer = -1, m_max::Integer = -1; kwargs...) where T<:Number -> Nothing

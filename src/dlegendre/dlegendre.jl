@@ -1,23 +1,17 @@
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+## Description #############################################################################
 #
-# Description
-# ==========================================================================================
+# Functions related to the first-order derivative of associated Legendre functions.
 #
-#   Functions related to the first-order derivative of associated Legendre functions.
+## References ##############################################################################
 #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+# [1] Du, J., Chen, C., Lesur, V., and Wang, L (2015). Non-singular spherical harmonic
+#     expressions of geomagnetic vector and gradient tensor fields in the local
+#     north-oriented reference frame. Geoscientific Model Development, 8, pp. 1979-1990.
 #
-# References
-# ==========================================================================================
+# [2] Ilk, K. H.: Ein Beitrag zur Dynamik ausgedehnter Körper-Gravitationswechselwirkung,
+#     Deutsche Geodätische Kommission.  Reihe C, Heft Nr. 288, München, 1983.
 #
-#   [1] Du, J., Chen, C., Lesur, V., and Wang, L (2015). Non-singular spherical harmonic
-#       expressions of geomagnetic vector and gradient tensor fields in the local
-#       north-oriented reference frame. Geoscientific Model Development, 8, pp. 1979-1990.
-#
-#   [2] Ilk, K. H.: Ein Beitrag zur Dynamik ausgedehnter Körper-Gravitationswechselwirkung,
-#       Deutsche Geodätische Kommission.  Reihe C, Heft Nr. 288, München, 1983.
-#
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+############################################################################################
 
 export dlegendre!, dlegendre
 
@@ -50,6 +44,7 @@ using the same normalization `N`, which can be computed using the function
 [`legendre`](@ref).
 
 !!! warning
+
     The user is responsible to pass a matrix `P` with the correct values. For example, if
     `ph_term` is `true`, `P` must also be computed with `ph_term` set to `true`.
 

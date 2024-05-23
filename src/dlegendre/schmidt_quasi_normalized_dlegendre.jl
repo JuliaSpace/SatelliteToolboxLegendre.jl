@@ -1,12 +1,9 @@
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+## Description #############################################################################
 #
-# Description
-# ==========================================================================================
+# Compute the first-order derivative of associated Legendre functions with the Schmidt
+# quasi-normalization.
 #
-#   Compute the first-order derivative of associated Legendre functions with the Schmidt
-#   quasi-normalization.
-#
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+############################################################################################
 
 """
     schmidt_quasi_normalized_dlegendre!(dP::AbstractMatrix, ϕ::Number, P::AbstractMatrix, n_max::Integer = -1, m_max::Integer = -1; kwargs...) -> Nothing
@@ -31,6 +28,7 @@ associated Legendre function. This can be computed using the function
 [`schmidt_quase_normalized_legendre!`](@ref).
 
 !!! warning
+
     The user is responsible to pass a matrix `P` with the correct values. For example, if
     `ph_term` is `true`, `P` must also be computed with `ph_term` set to `true`.
 

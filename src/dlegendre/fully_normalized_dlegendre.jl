@@ -1,24 +1,18 @@
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+## Description #############################################################################
 #
-# Description
-# ==========================================================================================
-#
-#   Compute the first-order derivative of associated Legendre functions with full
+# Compute the first-order derivative of associated Legendre functions with full
 #   normalization.
 #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+## References ##############################################################################
 #
-# References
-# ==========================================================================================
+# [1] Du, J., Chen, C., Lesur, V., and Wang, L (2015). Non-singular spherical harmonic
+#     expressions of geomagnetic vector and gradient tensor fields in the local
+#     north-oriented reference frame. Geoscientific Model Development, 8, pp. 1979-1990.
 #
-#   [1] Du, J., Chen, C., Lesur, V., and Wang, L (2015). Non-singular spherical harmonic
-#       expressions of geomagnetic vector and gradient tensor fields in the local
-#       north-oriented reference frame. Geoscientific Model Development, 8, pp. 1979-1990.
+# [2] Ilk, K. H.: Ein Beitrag zur Dynamik ausgedehnter Körper-Gravitationswechselwirkung,
+#     Deutsche Geodätische Kommission.  Reihe C, Heft Nr. 288, München, 1983.
 #
-#   [2] Ilk, K. H.: Ein Beitrag zur Dynamik ausgedehnter Körper-Gravitationswechselwirkung,
-#       Deutsche Geodätische Kommission.  Reihe C, Heft Nr. 288, München, 1983.
-#
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+############################################################################################
 
 """
     fully_normalized_dlegendre!(dP::AbstractMatrix{T}, ϕ::Number, P::AbstractMatrix, n_max::Integer = -1, m_max::Integer = -1; kwargs...) where T<:Number -> Nothing
@@ -43,6 +37,7 @@ Legendre function. This can be computed using the function
 [`fully_normalized_legendre!`](@ref).
 
 !!! warning
+
     The user is responsible to pass a matrix `P` with the correct values. For example, if
     `ph_term` is `true`, `P` must also be computed with `ph_term` set to `true`.
 

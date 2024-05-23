@@ -1,11 +1,8 @@
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+## Description #############################################################################
 #
-# Description
-# ==========================================================================================
+# Miscellaneous functions.
 #
-#   Miscellaneous functions.
-#
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+############################################################################################
 
 # Return the maximum degree and order to compute the Legendre associated functions given the
 # matrix `P` and the configuration values `n_max` and `m_max`.
