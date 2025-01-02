@@ -6,8 +6,8 @@ authors = ["Ronan Arraes Jardim Chagas <ronisbr@gmail.com>"]
 version = "1.0.3"
 
 [compat]
-Test = "1.6"
-julia = "1.6"
+Test = "1.10"
+julia = "1.10"
 
 [extras]
 Test = "8dfed614-e22c-5e08-85e1-65c5234f0b40"
