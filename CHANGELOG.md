@@ -1,6 +1,11 @@
 SatelliteToolboxLegendre.jl Changelog
 =====================================
 
+Version 1.1.1
+-------------
+
+- ![Enhancement][badge-enhancement] Performance improvements.
+
 Version 1.1.0
 -------------
 
