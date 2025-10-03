@@ -89,22 +89,24 @@ function unnormalized_dlegendre!(
 
     @inbounds for n in 1:n_max
         for m in 0:n
+            dP_nm = zero(T)
+
             if m == 0
-                dP[di₀+n, dj₀+m] = -P[i₀+n, j₀+1]
+                dP_nm = -P[i₀ + n, j₀ + 1]
             elseif n != m
-                dP[di₀+n, dj₀+m] = ((n + m) * (n - m + 1) * P[i₀+n, j₀+m-1] - P[i₀+n, j₀+m+1]) / 2
+                dP_nm = ((n + m) * (n - m + 1) * P[i₀ + n, j₀ + m - 1] - P[i₀ + n, j₀ + m + 1]) / 2
             else
-                dP[di₀+n, dj₀+m] = ((n + m) * (n - m + 1) * P[i₀+n, j₀+m-1]) / 2
+                dP_nm = ((n + m) * (n - m + 1) * P[i₀ + n, j₀ + m - 1]) / 2
             end
 
-            dP[di₀+n, dj₀+m] *= fact
+            dP[di₀ + n, dj₀ + m] = fact * dP_nm
 
             # Check if the maximum desired order has been reached.
             m >= m_max && break
         end
     end
 
-    nothing
+    return nothing
 end
 
 """

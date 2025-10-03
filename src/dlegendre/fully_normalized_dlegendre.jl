@@ -111,6 +111,8 @@ function fully_normalized_dlegendre!(
 
     @inbounds for n in 1:n_max
         for m in 0:n
+            dP_nm = zero(T)
+
             if m == 0
                 aux  = √(T(n) * T(n + 1) / 2)
                 a_nm = aux / 2
@@ -121,35 +123,35 @@ function fully_normalized_dlegendre!(
                 #                   m
                 #   P_(n, -m) = (-1)  . P_(n, m),
                 #
-                dP[di₀+n, dj₀] = -a_nm * P[i₀+n, j₀+1] + b_nm * P[i₀+n, j₀+1]
+                dP_nm = -a_nm * P[i₀ + n, j₀ + 1] + b_nm * P[i₀ + n, j₀ + 1]
 
             # We should consider the case `m == 1` separately from `n == m` because of the
             # coefficient `C_{m}`.
             elseif m == 1
                 a_nm = √(T(2n) * T(n + 1)) / 2
-                dP[di₀+n, dj₀+1] = a_nm * P[i₀+n, j₀]
+                dP_nm = a_nm * P[i₀ + n, j₀]
 
                 # Only compute `b_nm` if `n > 1`. Otherwise, we could access an invalid
                 # memory region if `P` is 2 × 2.
                 if n > 1
                     b_nm = -√(T(n + 2) * T(n - 1)) / 2
 
-                    dP[di₀+n, dj₀+1] += b_nm * P[i₀+n, j₀+2]
+                    dP_nm += b_nm * P[i₀ + n, j₀ + 2]
                 end
 
             elseif n != m
                 a_nm = +√(T(n + m) * T(n - m + 1)) / 2
                 b_nm = -√(T(n + m + 1) * T(n - m)) / 2
 
-                dP[di₀+n, dj₀+m] = a_nm * P[i₀+n, j₀+m-1] + b_nm * P[i₀+n, j₀+m+1]
+                dP_nm = a_nm * P[i₀ + n, j₀ + m - 1] + b_nm * P[i₀ + n, j₀ + m + 1]
 
             else
                 a_nm = +√(T(n + m) * T(n - m + 1)) / 2
 
-                dP[di₀+n, dj₀+m] = a_nm * P[i₀+n, j₀+m-1]
+                dP_nm = a_nm * P[i₀ + n, j₀ + m - 1]
             end
 
-            dP[di₀+n, dj₀+m] *= fact
+            dP[i₀ + n, j₀ + m] = fact * dP_nm
 
             # Check if the maximum desired order has been reached.
             m >= m_max && break

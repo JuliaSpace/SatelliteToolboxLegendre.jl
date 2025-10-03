@@ -83,10 +83,10 @@ function schmidt_quasi_normalized_legendre!(
             continue
 
         elseif n == 1
-            P[i₀+1, j₀] = +c
+            P[i₀ + 1, j₀] = +c
 
             if m_max > 0
-                P[i₀+1, j₀+1] = +s_fact
+                P[i₀ + 1, j₀ + 1] = +s_fact
             end
 
             continue
@@ -95,9 +95,10 @@ function schmidt_quasi_normalized_legendre!(
         aux_n = T(2n - 1) # ......................................... √((2n - 1) * (2n - 1))
 
         for m in 0:n
+            P_nm = zero(T)
 
             if m == n
-                P[i₀+n, j₀+n] = s_fact * √(aux_n / T(2n)) * P[i₀+n-1, j₀+n-1]
+                P_nm = s_fact * √(aux_n / T(2n)) * P[i₀ + n - 1, j₀ + n - 1]
 
             else
                 aux_nm = √(T(n - m) * T(n + m))
@@ -107,11 +108,13 @@ function schmidt_quasi_normalized_legendre!(
                 # We assume that the matrix is not initialized. Hence, we must not access
                 # elements on the upper triangle.
                 if m != n - 1
-                    P[i₀+n, j₀+m] = a_nm * P[i₀+n-1, j₀+m] - b_nm * P[i₀+n-2, j₀+m]
+                    P_nm = a_nm * P[i₀ + n - 1, j₀ + m] - b_nm * P[i₀ + n - 2, j₀ + m]
                 else
-                    P[i₀+n, j₀+m] = a_nm * P[i₀+n-1, j₀+m]
+                    P_nm = a_nm * P[i₀ + n - 1, j₀ + m]
                 end
             end
+
+            P[i₀ + n, j₀ + m] = P_nm
 
             # Check if the maximum desired order has been reached.
             m == m_max && break
