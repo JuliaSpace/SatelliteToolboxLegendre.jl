@@ -1,6 +1,11 @@
 SatelliteToolboxLegendre.jl Changelog
 =====================================
 
+Version 1.1.2
+-------------
+
+- ![Enhancement][badge-enhancement] Huge performance increase for lower triangular storage.
+
 Version 1.1.1
 -------------
 
