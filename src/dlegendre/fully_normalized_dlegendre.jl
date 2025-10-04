@@ -134,21 +134,24 @@ function fully_normalized_dlegendre!(
                 # Only compute `b_nm` if `n > 1`. Otherwise, we could access an invalid
                 # memory region if `P` is 2 × 2.
                 if n > 1
-                    b_nm = -√(T(n + 2) * T(n - 1)) / 2
-
+                    b_nm   = -√(T(n + 2) * T(n - 1)) / 2
                     dP_nm += b_nm * P[i₀ + n, j₀ + 2]
                 end
 
-            elseif n != m
-                a_nm = +√(T(n + m) * T(n - m + 1)) / 2
-                b_nm = -√(T(n + m + 1) * T(n - m)) / 2
-
-                dP_nm = a_nm * P[i₀ + n, j₀ + m - 1] + b_nm * P[i₀ + n, j₀ + m + 1]
-
             else
-                a_nm = +√(T(n + m) * T(n - m + 1)) / 2
+                # NOTE: In the past, we have a `elseif n != m` branch and an `else` branch.
+                # However, this new version lead to a huge performance improvement for lower
+                # triangular storage matrices. See:
+                #
+                #   https://discourse.julialang.org/t/help-improving-the-performance-of-my-implementation-of-a-lower-diagonal-storage/132867/9
 
+                a_nm  = +√(T(n + m) * T(n - m + 1)) / 2
                 dP_nm = a_nm * P[i₀ + n, j₀ + m - 1]
+
+                if n != m
+                    b_nm   = -√(T(n + m + 1) * T(n - m)) / 2
+                    dP_nm += b_nm * P[i₀ + n, j₀ + m + 1]
+                end
             end
 
             dP[i₀ + n, j₀ + m] = fact * dP_nm
