@@ -71,7 +71,7 @@ function unnormalized_dlegendre!(
     # clarification is required.
 
     ϕ    = mod(ϕ, T(2π))
-    fact = ϕ > π ? -1 : 1
+    fact = ϕ > T(π) ? -1 : 1
 
     if ph_term
         fact *= -1
