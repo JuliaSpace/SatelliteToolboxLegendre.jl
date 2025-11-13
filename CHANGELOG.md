@@ -1,6 +1,11 @@
 SatelliteToolboxLegendre.jl Changelog
 =====================================
 
+Verison 1.1.3
+-------------
+
+- ![Enhancement][badge-enhancement] Fix allocation in Julia v1.12. ([#2][gh-pr-2])
+
 Version 1.1.2
 -------------
 
@@ -55,3 +60,4 @@ Version 0.1.0
 [badge-bugfix]: https://img.shields.io/badge/Bugfix-purple.svg
 [badge-info]: https://img.shields.io/badge/Info-gray.svg
 
+[gh-pr-2]: https://github.com/JuliaSpace/SatelliteToolboxLegendre.jl/pull/2
