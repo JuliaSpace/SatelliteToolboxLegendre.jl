@@ -5,10 +5,13 @@
 
 # SatelliteToolboxLegendre.jl
 
-[![CI](https://github.com/JuliaSpace/SatelliteToolboxLegendre.jl/actions/workflows/ci.yml/badge.svg)](https://github.com/JuliaSpace/SatelliteToolboxLegendre.jl/actions/workflows/ci.yml)
-[![codecov](https://codecov.io/gh/JuliaSpace/SatelliteToolboxLegendre.jl/branch/main/graph/badge.svg?token=AUE8ZZ5IXJ)](https://codecov.io/gh/JuliaSpace/SatelliteToolboxLegendre.jl)
-[![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-4495d1.svg)](https://github.com/invenia/BlueStyle)
-[![DOI](https://zenodo.org/badge/634988889.svg)](https://zenodo.org/doi/10.5281/zenodo.11246481)
+[![CI](https://img.shields.io/github/actions/workflow/status/JuliaSpace/SatelliteToolboxLegendre.jl/ci.yml?style=flat-square&logo=githubactions&logoColor=white&labelColor=475569&label=CI)](https://github.com/JuliaSpace/SatelliteToolboxLegendre.jl/actions/workflows/ci.yml)
+[![Codecov](https://img.shields.io/codecov/c/github/JuliaSpace/SatelliteToolboxLegendre.jl?token=AUE8ZZ5IXJ&style=flat-square&logo=codecov&logoColor=white&labelColor=475569)](https://codecov.io/gh/JuliaSpace/SatelliteToolboxLegendre.jl)
+[![docs-stable](https://img.shields.io/badge/docs-stable-16A34A?style=flat-square&logo=gitbook&logoColor=white&labelColor=475569)](https://juliaspace.github.io/SatelliteToolboxLegendre.jl/stable)
+[![docs-dev](https://img.shields.io/badge/docs-dev-D97706?style=flat-square&logo=gitbook&logoColor=white&labelColor=475569)](https://juliaspace.github.io/SatelliteToolboxLegendre.jl/dev)
+[![License](https://img.shields.io/github/license/JuliaSpace/SatelliteToolboxLegendre.jl?style=flat-square&logo=readme&logoColor=white&labelColor=475569&color=0284C7)](https://github.com/JuliaSpace/SatelliteToolboxLegendre.jl/blob/main/LICENSE)
+[![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-4495D1?style=flat-square&logo=julia&logoColor=white&labelColor=475569)](https://github.com/invenia/BlueStyle)
+[![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.11246481-DB2777?style=flat-square&logo=doi&logoColor=white&labelColor=475569)](https://zenodo.org/doi/10.5281/zenodo.11246481)
 
 This package contains function to compute the Legendre associated functions and its
 derivatives for the models in the **SatelliteToolbox.jl** ecosystem.
