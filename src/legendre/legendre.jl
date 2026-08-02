@@ -34,6 +34,12 @@ will be computed are given by the parameters `n_max` and `m_max`. If they are ne
 
 The result will be stored in matrix `P`.
 
+!!! note
+
+    This function only writes to the elements of `P` in the lower triangular part up to
+    the computed degree and order. If `P` is being reused with a smaller `n_max` or
+    `m_max`, the remaining elements will keep their previous (stale) values.
+
 The parameter `N` selects the normalization. The following values are valid:
 
 - `Val(:full)`: Compute the fully normalized associated Legendre function.

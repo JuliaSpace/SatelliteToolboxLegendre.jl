@@ -33,6 +33,12 @@ The maximum degree and order that will be computed are given by the parameters `
 
 The derivatives will be stored in the matrix `dP`.
 
+!!! note
+
+    This function only writes to the elements of `dP` in the lower triangular part up to
+    the computed degree and order. If `dP` is being reused with a smaller `n_max` or
+    `m_max`, the remaining elements will keep their previous (stale) values.
+
 The parameter `N` selects the normalization. The following values are valid:
 
 - `Val(:full)`: Compute the fully normalized associated Legendre function.
