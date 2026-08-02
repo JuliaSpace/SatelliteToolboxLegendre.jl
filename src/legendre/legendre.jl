@@ -227,3 +227,106 @@ function legendre(
 )
     return unnormalized_legendre(ϕ, n_max, m_max; ph_term = ph_term)
 end
+
+"""
+    legendre!(P::AbstractMatrix, ϕ::Number, coefs::LegendreCoefficients{N, T}, n_max::Integer = -1, m_max::Integer = -1; kwargs...) where {N, T<:AbstractFloat} -> Nothing
+
+Compute the associated Legendre function `P_n,m[cos(ϕ)]` using the precomputed coefficients
+`coefs`, which also select the normalization (see [`LegendreCoefficients`](@ref)). The
+maximum degree and order that will be computed are given by the parameters `n_max` and
+`m_max`. If they are negative (default), the dimensions of matrix `P` will be used. This
+function throws an `ArgumentError` if the maximum degree or order exceeds the ones
+supported by `coefs`.
+
+The result will be stored in matrix `P` and all the arithmetic operations are performed
+using the element type `T` of the coefficients.
+
+!!! note
+
+    This function only writes to the elements of `P` in the lower triangular part up to
+    the computed degree and order. If `P` is being reused with a smaller `n_max` or
+    `m_max`, the remaining elements will keep their previous (stale) values.
+
+# Keywords
+
+- `ph_term::Bool`: If `true`, the Condon-Shortley phase term `(-1)^m` will be included.
+    (**Default** = `false`)
+"""
+function legendre!(
+    P::AbstractMatrix,
+    ϕ::Number,
+    coefs::LegendreCoefficients{N, T},
+    n_max::Integer = -1,
+    m_max::Integer = -1;
+    ph_term::Bool = false
+) where {N, T<:AbstractFloat}
+    # Obtain the maximum degree and order that must be computed.
+    n_max, m_max = _get_degree_and_order(P, n_max, m_max)
+
+    if (n_max > coefs.n_max) || (m_max > coefs.m_max_P)
+        throw(ArgumentError(
+            "The coefficients support the maximum degree $(coefs.n_max) and order " *
+            "$(coefs.m_max_P), but the computation requires degree $n_max and order " *
+            "$m_max."
+        ))
+    end
+
+    # Auxiliary variables to improve code performance.
+    s, c = sincos(T(ϕ))
+
+    # The sine must be always positive. In fact, `s` was previously computed using
+    # `√(1 - c^2)`. However, we had numerical problems for very small angles that lead to
+    # `cos(ϕ) = 1`.
+    if s < 0
+        s = -s
+    end
+
+    s_fact = !ph_term ? +s : -s
+
+    # Get the first indices in `P` to take into account offset arrays.
+    i₀, j₀ = first.(axes(P))
+
+    @inbounds for n in 0:n_max
+        # Starting values.
+        if n == 0
+            P[i₀, j₀] = 1
+            continue
+
+        elseif n == 1
+            P[i₀ + 1, j₀] = coefs.seed * c
+
+            if m_max > 0
+                P[i₀ + 1, j₀ + 1] = coefs.seed * s_fact
+            end
+
+            continue
+        end
+
+        for m in 0:n
+            P_nm = zero(T)
+
+            if n == m
+                P_nm = s_fact * coefs.diag[n + 1] * T(P[i₀ + n - 1, j₀ + n - 1])
+
+            else
+                a_nm = coefs.a[n + 1, m + 1] * c
+
+                # We assume that the matrix is not initialized. Hence, we must not access
+                # elements on the upper triangle.
+                if m != n - 1
+                    P_nm = a_nm * T(P[i₀ + n - 1, j₀ + m]) -
+                        coefs.b[n + 1, m + 1] * T(P[i₀ + n - 2, j₀ + m])
+                else
+                    P_nm = a_nm * T(P[i₀ + n - 1, j₀ + m])
+                end
+            end
+
+            P[i₀ + n, j₀ + m] = P_nm
+
+            # Check if the maximum desired order has been reached.
+            m >= m_max && break
+        end
+    end
+
+    return nothing
+end

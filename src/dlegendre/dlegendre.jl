@@ -157,3 +157,98 @@ function dlegendre(
 )
     return unnormalized_dlegendre(ϕ, n_max, m_max; ph_term = ph_term)
 end
+
+"""
+    dlegendre!(dP::AbstractMatrix, ϕ::Number, P::AbstractMatrix, coefs::LegendreCoefficients{N, T}, n_max::Integer = -1, m_max::Integer = -1; kwargs...) where {N, T<:AbstractFloat} -> Nothing
+
+Compute the first-order derivative of the associated Legendre function `P_n,m[cos(ϕ)]`
+with respect to `ϕ` [rad] using the precomputed coefficients `coefs`, which also select the
+normalization (see [`LegendreCoefficients`](@ref)). The maximum degree and order that will
+be computed are given by the parameters `n_max` and `m_max`. If they are negative
+(default), the dimensions of matrix `dP` will be used. This function throws an
+`ArgumentError` if the maximum degree or order exceeds the ones supported by `coefs`.
+
+The derivatives will be stored in the matrix `dP` and all the arithmetic operations are
+performed using the element type `T` of the coefficients.
+
+This algorithm needs the matrix `P` with the values of the associated Legendre function
+using the same normalization, which can be computed using [`legendre!`](@ref) with the same
+coefficients `coefs`. The algorithm accesses the terms `P[n, m + 1]` when the order `m` is
+lower than the degree `n`. Hence, the matrix `P` must have at least `n_max + 1` rows and
+`m_max + 2` columns if `m_max < n_max`, or `m_max + 1` columns otherwise. This function
+throws an `ArgumentError` if `P` does not have the required dimensions.
+
+!!! note
+
+    This function only writes to the elements of `dP` in the lower triangular part up to
+    the computed degree and order. If `dP` is being reused with a smaller `n_max` or
+    `m_max`, the remaining elements will keep their previous (stale) values.
+
+!!! warning
+
+    The user is responsible for passing a matrix `P` with the correct values. For example,
+    if `ph_term` is `true`, `P` must also be computed with `ph_term` set to `true`.
+
+# Keywords
+
+- `ph_term::Bool`: If `true`, the Condon-Shortley phase term `(-1)^m` will be included.
+    (**Default** = `false`)
+"""
+function dlegendre!(
+    dP::AbstractMatrix,
+    ϕ::Number,
+    P::AbstractMatrix,
+    coefs::LegendreCoefficients{N, T},
+    n_max::Integer = -1,
+    m_max::Integer = -1;
+    ph_term::Bool = false
+) where {N, T<:AbstractFloat}
+    # Obtain the maximum degree and order that must be computed.
+    n_max, m_max = _get_degree_and_order(dP, P, n_max, m_max)
+
+    if (n_max > coefs.n_max) || (m_max > coefs.m_max)
+        throw(ArgumentError(
+            "The coefficients support the maximum degree $(coefs.n_max) and order " *
+            "$(coefs.m_max), but the computation requires degree $n_max and order $m_max."
+        ))
+    end
+
+    # See the kernels in `src/dlegendre/` for the definition of the variable `fact`.
+    ϕ    = mod(ϕ, T(2π))
+    fact = ϕ > T(π) ? -1 : 1
+
+    if ph_term
+        fact *= -1
+    end
+
+    # Get the first indices in `P` to take into account offset arrays.
+    i₀, j₀ = first.(axes(P))
+
+    # Get the first indices in `dP` to take into account offset arrays.
+    di₀, dj₀ = first.(axes(dP))
+
+    dP[di₀, dj₀] = 0
+
+    @inbounds for n in 1:n_max
+        for m in 0:n
+            dP_nm = zero(T)
+
+            if m == 0
+                dP_nm = -coefs.da[n + 1, 1] * T(P[i₀ + n, j₀ + 1])
+            else
+                dP_nm = coefs.da[n + 1, m + 1] * T(P[i₀ + n, j₀ + m - 1])
+
+                if n != m
+                    dP_nm -= coefs.db[n + 1, m + 1] * T(P[i₀ + n, j₀ + m + 1])
+                end
+            end
+
+            dP[di₀ + n, dj₀ + m] = fact * dP_nm
+
+            # Check if the maximum desired order has been reached.
+            m >= m_max && break
+        end
+    end
+
+    return nothing
+end
