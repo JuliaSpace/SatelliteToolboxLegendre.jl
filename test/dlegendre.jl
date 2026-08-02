@@ -49,9 +49,9 @@
 
     result_dP, result_P = dlegendre(Val(:unnormalized), 0.123, 3, 1)
     @test result_dP ≈ expected_dP
-    @test result_P  ≈ expected_P
+    @test result_P ≈ expected_P
     @test eltype(result_dP) == Float64
-    @test eltype(result_P)  == Float64
+    @test eltype(result_P) == Float64
 
     # -- Angle with Negative Sine ----------------------------------------------------------
 
@@ -161,9 +161,9 @@ end
 
     result_dP, result_P = dlegendre(Val(:schmidt), 0.123, 3, 1)
     @test result_dP ≈ expected_dP
-    @test result_P  ≈ expected_P
+    @test result_P ≈ expected_P
     @test eltype(result_dP) == Float64
-    @test eltype(result_P)  == Float64
+    @test eltype(result_P) == Float64
 
     # -- Angle with Negative Sine ----------------------------------------------------------
 
@@ -273,9 +273,9 @@ end
 
     result_dP, result_P = dlegendre(Val(:full), 0.123, 3, 1)
     @test result_dP ≈ expected_dP
-    @test result_P  ≈ expected_P
+    @test result_P ≈ expected_P
     @test eltype(result_dP) == Float64
-    @test eltype(result_P)  == Float64
+    @test eltype(result_P) == Float64
 
     # -- Angle with Negative Sine ----------------------------------------------------------
 
@@ -373,8 +373,19 @@ end
     # central finite differences are not valid at those points. We test them separately
     # using one-sided finite differences.
     ϕs = [
-        1e-4, 0.123, π / 2, π - 0.01, π + 0.01, 4.0, 3π / 2, 2π - 0.01, 2π + 0.5, 7.0,
-        -0.123, -2.0, 10.0
+        1e-4,
+        0.123,
+        π / 2,
+        π - 0.01,
+        π + 0.01,
+        4.0,
+        3π / 2,
+        2π - 0.01,
+        2π + 0.5,
+        7.0,
+        -0.123,
+        -2.0,
+        10.0,
     ]
 
     for norm in (Val(:unnormalized), Val(:schmidt), Val(:full))

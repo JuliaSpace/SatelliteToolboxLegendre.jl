@@ -80,7 +80,7 @@ end
 
         # The matrix `P` does not have the required dimensions to compute the derivative.
         coefs = LegendreCoefficients(norm, 3, 1)
-        P  = zeros(4, 2)
+        P = zeros(4, 2)
         dP = zeros(4, 2)
         @test_throws ArgumentError dlegendre!(dP, 0.123, P, coefs)
     end

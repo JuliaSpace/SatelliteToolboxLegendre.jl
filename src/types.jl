@@ -35,7 +35,7 @@ avoids evaluating square roots at every call, largely improving the performance.
 
 [`legendre!`](@ref), [`dlegendre!`](@ref)
 """
-struct LegendreCoefficients{N, T<:AbstractFloat}
+struct LegendreCoefficients{N, T <: AbstractFloat}
     n_max::Int
     m_max::Int
     m_max_P::Int

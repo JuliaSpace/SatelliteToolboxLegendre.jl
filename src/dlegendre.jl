@@ -69,8 +69,8 @@ function dlegendre!(
     P::AbstractMatrix,
     n_max::Integer = -1,
     m_max::Integer = -1;
-    ph_term::Bool = false
-) where T<:Number
+    ph_term::Bool = false,
+) where {T <: Number}
     # Obtain the maximum degree and order that must be computed.
     n_max, m_max = _get_degree_and_order(dP, P, n_max, m_max)
 
@@ -112,8 +112,8 @@ function dlegendre(
     ϕ::T,
     n_max::Integer,
     m_max::Integer = -1;
-    ph_term::Bool = false
-) where T<:Number
+    ph_term::Bool = false,
+) where {T <: Number}
     n_max < 0 && throw(ArgumentError("n_max must not be negative."))
 
     if (m_max < 0) || (m_max > n_max)
@@ -182,16 +182,18 @@ function dlegendre!(
     coefs::LegendreCoefficients{N, T},
     n_max::Integer = -1,
     m_max::Integer = -1;
-    ph_term::Bool = false
-) where {N, T<:AbstractFloat}
+    ph_term::Bool = false,
+) where {N, T <: AbstractFloat}
     # Obtain the maximum degree and order that must be computed.
     n_max, m_max = _get_degree_and_order(dP, P, n_max, m_max)
 
     if (n_max > coefs.n_max) || (m_max > coefs.m_max)
-        throw(ArgumentError(
-            "The coefficients support the maximum degree $(coefs.n_max) and order " *
-            "$(coefs.m_max), but the computation requires degree $n_max and order $m_max."
-        ))
+        throw(
+            ArgumentError(
+                "The coefficients support the maximum degree $(coefs.n_max) and order " *
+                "$(coefs.m_max), but the computation requires degree $n_max and order $m_max.",
+            ),
+        )
     end
 
     return _dlegendre_kernel!(dP, ϕ, P, coefs, n_max, m_max, ph_term, T)

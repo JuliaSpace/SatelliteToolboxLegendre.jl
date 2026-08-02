@@ -48,7 +48,7 @@ function LegendreCoefficients(
     N::Union{Val{:full}, Val{:schmidt}, Val{:unnormalized}},
     n_max::Integer,
     m_max::Integer = -1;
-    T::Type{<:AbstractFloat} = Float64
+    T::Type{<:AbstractFloat} = Float64,
 )
     n_max = Int(n_max)
     m_max = Int(m_max)
@@ -74,15 +74,7 @@ function LegendreCoefficients(
     _fill_dlegendre_coefficients!(N, da, db, n_max, m_max)
 
     return LegendreCoefficients{_normalization(N), T}(
-        n_max,
-        m_max,
-        m_max_P,
-        seed,
-        diag,
-        a,
-        b,
-        da,
-        db
+        n_max, m_max, m_max_P, seed, diag, a, b, da, db
     )
 end
 
@@ -115,8 +107,8 @@ function _fill_legendre_coefficients!(
     a::Matrix{T},
     b::Matrix{T},
     n_max::Integer,
-    m_max::Integer
-) where T<:AbstractFloat
+    m_max::Integer,
+) where {T <: AbstractFloat}
     @inbounds for n in 2:n_max
         aux = _kernel_legendre_aux(N, T, n)
 
@@ -143,8 +135,8 @@ function _fill_dlegendre_coefficients!(
     da::Matrix{T},
     db::Matrix{T},
     n_max::Integer,
-    m_max::Integer
-) where T<:AbstractFloat
+    m_max::Integer,
+) where {T <: AbstractFloat}
     @inbounds for n in 1:n_max
         for m in 0:min(n, m_max)
             da[n + 1, m + 1] = _kernel_dlegendre_a(N, T, n, m)

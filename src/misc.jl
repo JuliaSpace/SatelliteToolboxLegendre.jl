@@ -63,10 +63,7 @@ with the resulting degree and order.
 - `Int`: Maximum order that must be computed.
 """
 function _get_degree_and_order(
-    dP::AbstractMatrix,
-    P::AbstractMatrix,
-    n_max::Integer,
-    m_max::Integer
+    dP::AbstractMatrix, P::AbstractMatrix, n_max::Integer, m_max::Integer
 )
     # Obtain the maximum degree and order that fits the matrix `dP`.
     n_max, m_max = _get_degree_and_order(dP, n_max, m_max)
@@ -77,11 +74,13 @@ function _get_degree_and_order(
     req_cols = (m_max < n_max) ? m_max + 2 : m_max + 1
 
     if (P_rows < n_max + 1) || (P_cols < req_cols)
-        throw(ArgumentError(
-            "The matrix `P` must have at least $(n_max + 1) rows and $req_cols columns " *
-            "to compute the derivative with degree $n_max and order $m_max, but it has " *
-            "$P_rows rows and $P_cols columns."
-        ))
+        throw(
+            ArgumentError(
+                "The matrix `P` must have at least $(n_max + 1) rows and $req_cols columns " *
+                "to compute the derivative with degree $n_max and order $m_max, but it has " *
+                "$P_rows rows and $P_cols columns.",
+            ),
+        )
     end
 
     return n_max, m_max

@@ -319,21 +319,14 @@ end
     dP = zeros(4, 4)
 
     @test (@inferred SatelliteToolboxLegendre._get_degree_and_order(
-        P,
-        Int32(3),
-        Int32(2)
+        P, Int32(3), Int32(2)
     )) === (3, 2)
 
     @test (@inferred SatelliteToolboxLegendre._get_degree_and_order(
-        dP,
-        P,
-        Int32(3),
-        Int32(2)
+        dP, P, Int32(3), Int32(2)
     )) === (3, 2)
 
     @test (@inferred SatelliteToolboxLegendre._get_degree_and_order(
-        P,
-        UInt8(2),
-        UInt8(1)
+        P, UInt8(2), UInt8(1)
     )) === (2, 1)
 end

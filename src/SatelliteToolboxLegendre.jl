@@ -13,5 +13,4 @@ include("./coefficients.jl")
 include("./dlegendre.jl")
 include("./legendre.jl")
 
-
 end # module SatelliteToolboxLegendre
