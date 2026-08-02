@@ -4,6 +4,8 @@ module SatelliteToolboxLegendre
 #                                         Includes                                         #
 ############################################################################################
 
+include("./types.jl")
+
 include("./misc.jl")
 include("./coefficients.jl")
 
