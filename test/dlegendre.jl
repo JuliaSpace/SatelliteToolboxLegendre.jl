@@ -405,3 +405,18 @@ end
         end
     end
 end
+
+@testset "Mixed Element Types" begin
+    # The derivative computation must be type stable even if the element types of `dP` and
+    # `P` differ. In this case, all the arithmetic operations are performed using the
+    # element type of `dP`.
+    for norm in (Val(:unnormalized), Val(:schmidt), Val(:full))
+        dP_ref, P = dlegendre(norm, 0.123, 3)
+
+        dP = zeros(Float32, 4, 4)
+        @inferred dlegendre!(norm, dP, 0.123, P)
+
+        @test dP ≈ Float32.(dP_ref)
+        @test eltype(dP) == Float32
+    end
+end

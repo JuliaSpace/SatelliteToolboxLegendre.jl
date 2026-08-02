@@ -130,19 +130,19 @@ function fully_normalized_dlegendre!(
                 #                   m
                 #   P_(n, -m) = (-1)  . P_(n, m),
                 #
-                dP_nm = -a_nm * P[i₀ + n, j₀ + 1] + b_nm * P[i₀ + n, j₀ + 1]
+                dP_nm = -a_nm * T(P[i₀ + n, j₀ + 1]) + b_nm * T(P[i₀ + n, j₀ + 1])
 
             # We should consider the case `m == 1` separately from `n == m` because of the
             # coefficient `C_{m}`.
             elseif m == 1
                 a_nm = √(T(2n) * T(n + 1)) / 2
-                dP_nm = a_nm * P[i₀ + n, j₀]
+                dP_nm = a_nm * T(P[i₀ + n, j₀])
 
                 # Only compute `b_nm` if `n > 1`. Otherwise, we could access an invalid
                 # memory region if `P` is 2 × 2.
                 if n > 1
                     b_nm   = -√(T(n + 2) * T(n - 1)) / 2
-                    dP_nm += b_nm * P[i₀ + n, j₀ + 2]
+                    dP_nm += b_nm * T(P[i₀ + n, j₀ + 2])
                 end
 
             else
@@ -153,11 +153,11 @@ function fully_normalized_dlegendre!(
                 #   https://discourse.julialang.org/t/help-improving-the-performance-of-my-implementation-of-a-lower-diagonal-storage/132867/9
 
                 a_nm  = +√(T(n + m) * T(n - m + 1)) / 2
-                dP_nm = a_nm * P[i₀ + n, j₀ + m - 1]
+                dP_nm = a_nm * T(P[i₀ + n, j₀ + m - 1])
 
                 if n != m
                     b_nm   = -√(T(n + m + 1) * T(n - m)) / 2
-                    dP_nm += b_nm * P[i₀ + n, j₀ + m + 1]
+                    dP_nm += b_nm * T(P[i₀ + n, j₀ + m + 1])
                 end
             end
 
