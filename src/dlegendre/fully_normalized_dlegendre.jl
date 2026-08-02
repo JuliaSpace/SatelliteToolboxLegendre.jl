@@ -42,8 +42,8 @@ dimensions.
 
 !!! warning
 
-    The user is responsible to pass a matrix `P` with the correct values. For example, if
-    `ph_term` is `true`, `P` must also be computed with `ph_term` set to `true`.
+    The user is responsible for passing a matrix `P` with the correct values. For example,
+    if `ph_term` is `true`, `P` must also be computed with `ph_term` set to `true`.
 
 # Keywords
 
@@ -62,7 +62,7 @@ function fully_normalized_dlegendre!(
     # Obtain the maximum degree and order that must be computed.
     n_max, m_max = _get_degree_and_order(dP, P, n_max, m_max)
 
-    # The derivative is compute using the following equation [1, p. 1981]:
+    # The derivative is computed using the following equation [1, p. 1981]:
     #
     #   ∂P(n, m)
     #   ──────── = a_nm . P(n,m-1) + b_nm . P(n,m+1),
@@ -204,7 +204,7 @@ function fully_normalized_dlegendre(
         m_max = n_max
     end
 
-    # Check if we need to compute and additional degree in `P` to provide the desire order
+    # Check if we need to compute an additional degree in `P` to provide the desired order
     # in `dP`.
     if n_max == m_max
         n_max_P = m_max_P = n_max

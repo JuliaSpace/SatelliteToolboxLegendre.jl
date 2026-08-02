@@ -32,7 +32,7 @@ will be computed are given by the parameters `n_max` and `m_max`. If they are ne
     maximum degree -> number of rows - 1
     maximum order  -> number of columns - 1
 
-The result will be stored at matrix `P`.
+The result will be stored in matrix `P`.
 
 The parameter `N` selects the normalization. The following values are valid:
 

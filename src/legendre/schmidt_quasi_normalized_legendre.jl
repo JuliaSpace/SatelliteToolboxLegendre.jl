@@ -22,7 +22,7 @@ used:
     maximum degree -> number of rows - 1
     maximum order  -> number of columns - 1
 
-The result will be stored at matrix `P`.
+The result will be stored in matrix `P`.
 
 # Keywords
 

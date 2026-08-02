@@ -48,8 +48,8 @@ throws an `ArgumentError` if `P` does not have the required dimensions.
 
 !!! warning
 
-    The user is responsible to pass a matrix `P` with the correct values. For example, if
-    `ph_term` is `true`, `P` must also be computed with `ph_term` set to `true`.
+    The user is responsible for passing a matrix `P` with the correct values. For example,
+    if `ph_term` is `true`, `P` must also be computed with `ph_term` set to `true`.
 
 # Keywords
 

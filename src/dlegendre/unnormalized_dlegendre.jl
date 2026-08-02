@@ -40,8 +40,8 @@ Hence, the matrix `P` must have at least `n_max + 1` rows and `m_max + 2` column
 if `P` does not have the required dimensions.
 
 !!! warning
-    The user is responsible to pass a matrix `P` with the correct values. For example, if
-    `ph_term` is `true`, `P` must also be computed with `ph_term` set to `true`.
+    The user is responsible for passing a matrix `P` with the correct values. For example,
+    if `ph_term` is `true`, `P` must also be computed with `ph_term` set to `true`.
 
 # Keywords
 
@@ -152,7 +152,7 @@ function unnormalized_dlegendre(
         m_max = n_max
     end
 
-    # Check if we need to compute and additional degree in `P` to provide the desire order
+    # Check if we need to compute an additional degree in `P` to provide the desired order
     # in `dP`.
     if n_max == m_max
         n_max_P = m_max_P = n_max
