@@ -121,16 +121,15 @@ function fully_normalized_dlegendre!(
             dP_nm = zero(T)
 
             if m == 0
-                aux  = √(T(n) * T(n + 1) / 2)
-                a_nm = aux / 2
-                b_nm = -a_nm
-
+                # In this case, the equation uses the terms `P(n, -1)` and `P(n, +1)`.
                 # Notice that [1, p. 1985]:
                 #
                 #                   m
-                #   P_(n, -m) = (-1)  . P_(n, m),
+                #   P_(n, -m) = (-1)  . P_(n, m).
                 #
-                dP_nm = -a_nm * T(P[i₀ + n, j₀ + 1]) + b_nm * T(P[i₀ + n, j₀ + 1])
+                # Since `b_nm = -a_nm` when `m = 0`, both terms are equal and the equation
+                # simplifies to a single product.
+                dP_nm = -√(T(n) * T(n + 1) / 2) * T(P[i₀ + n, j₀ + 1])
 
             # We should consider the case `m == 1` separately from `n == m` because of the
             # coefficient `C_{m}`.
