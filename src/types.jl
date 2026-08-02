@@ -6,6 +6,14 @@
 
 export LegendreCoefficients
 
+# Container used to store the packed coefficients. In Julia versions 1.11 and above, we use
+# `Memory` for better performance. In earlier versions, we use a standard `Vector`.
+@static if VERSION >= v"1.11-"
+    const _PackedStorage{T} = Memory{T}
+else
+    const _PackedStorage{T} = Vector{T}
+end
+
 """
     struct LegendreCoefficients{N, T<:AbstractFloat}
 
@@ -17,6 +25,12 @@ The coefficients depend only on the degree and order. Hence, when the functions 
 evaluated at many angles `ϕ` with the same maximum degree and order, precomputing them
 avoids evaluating square roots at every call, largely improving the performance.
 
+The coefficients related to a degree and order are stored in packed vectors containing only
+the lower triangular part of the coefficient set, clamped at the maximum order (see
+`_packed_index`). In Julia versions 1.11 and above, the storage uses `Memory`. In earlier
+versions, it uses a standard `Vector`. The fields are internal and must not be modified or
+accessed directly.
+
 # Fields
 
 - `n_max::Int`: Maximum degree supported by the coefficients.
@@ -25,11 +39,16 @@ avoids evaluating square roots at every call, largely improving the performance.
     order higher than `m_max` (clamped to `n_max`) so the matrix `P` required by
     [`dlegendre!`](@ref) can be computed with the same object.
 - `seed::T`: Coefficient of the terms with degree 1.
-- `diag::Vector{T}`: Coefficients of the diagonal recursion (`n == m`).
-- `a::Matrix{T}`: Coefficients `a_nm` of the Legendre function recursion.
-- `b::Matrix{T}`: Coefficients `b_nm` of the Legendre function recursion.
-- `da::Matrix{T}`: Coefficients `a_nm` of the derivative equation.
-- `db::Matrix{T}`: Coefficients `b_nm` of the derivative equation.
+- `diag::_PackedStorage{T}`: Coefficients of the diagonal recursion (`n == m`), stored per
+    degree.
+- `a::_PackedStorage{T}`: Coefficients `a_nm` of the Legendre function recursion, packed
+    with maximum order `m_max_P`.
+- `b::_PackedStorage{T}`: Coefficients `b_nm` of the Legendre function recursion, packed
+    with maximum order `m_max_P`.
+- `da::_PackedStorage{T}`: Coefficients `a_nm` of the derivative equation, packed with
+    maximum order `m_max`.
+- `db::_PackedStorage{T}`: Coefficients `b_nm` of the derivative equation, packed with
+    maximum order `m_max`.
 
 # See Also
 
@@ -40,9 +59,9 @@ struct LegendreCoefficients{N, T <: AbstractFloat}
     m_max::Int
     m_max_P::Int
     seed::T
-    diag::Vector{T}
-    a::Matrix{T}
-    b::Matrix{T}
-    da::Matrix{T}
-    db::Matrix{T}
+    diag::_PackedStorage{T}
+    a::_PackedStorage{T}
+    b::_PackedStorage{T}
+    da::_PackedStorage{T}
+    db::_PackedStorage{T}
 end

@@ -85,3 +85,43 @@ function _get_degree_and_order(
 
     return n_max, m_max
 end
+
+"""
+    _packed_index(n::Int, m::Int, m_max::Int) -> Int
+
+Return the linear index in the packed coefficient storage of the element related to the
+degree `n` and order `m`, where `m_max` is the maximum order stored per degree.
+
+The packed storage contains, for each degree `n ≥ 0`, the elements with orders from 0 to
+`min(n, m_max)` laid out consecutively. Hence, the storage forms the lower triangular part
+of the coefficient set, clamped at the maximum order `m_max`.
+"""
+@inline function _packed_index(n::Int, m::Int, m_max::Int)
+    (n <= m_max) && return (n * (n + 1)) >> 1 + m + 1
+
+    q = m_max + 1
+    return (q * (q + 1)) >> 1 + (n - q) * q + m + 1
+end
+
+"""
+    _packed_length(n_max::Int, m_max::Int) -> Int
+
+Return the number of elements in the packed coefficient storage that supports the maximum
+degree `n_max` and the maximum order `m_max` per degree (see `_packed_index`).
+"""
+@inline function _packed_length(n_max::Int, m_max::Int)
+    q = min(m_max, n_max) + 1
+    return (q * (q + 1)) >> 1 + (n_max + 1 - q) * q
+end
+
+"""
+    _zeros_storage(::Type{T}, len::Int) where T -> _PackedStorage{T}
+
+Create a packed coefficient storage with element type `T` and `len` elements initialized
+to zero.
+"""
+function _zeros_storage(::Type{T}, len::Int) where T
+    storage = _PackedStorage{T}(undef, len)
+    fill!(storage, zero(T))
+    return storage
+end

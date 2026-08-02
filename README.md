@@ -275,18 +275,22 @@ julia> dP = zeros(61, 61);
 julia> dlegendre!(dP, 0.123, P, coefs)
 ```
 
+The coefficients are stored in packed vectors containing only the lower triangular part of
+the coefficient set, clamped at the maximum order. Hence, the memory usage is roughly half
+of the one required by dense matrices when `m_max = n_max`.
+
 The table below shows the time per call obtained when computing the fully normalized
 functions with `n_max = m_max` using `Float64` (Julia 1.12.6, Apple M2 Pro). Neither
 version allocates memory after the first call:
 
 | Function     | `n_max` | Computing the coefficients | Using `LegendreCoefficients` |    Gain |
 |:-------------|--------:|---------------------------:|-----------------------------:|--------:|
-| `legendre!`  |      10 |                   0.132 µs |                     0.065 µs |  2.03 x |
-| `legendre!`  |      60 |                   3.924 µs |                     1.865 µs |  2.10 x |
-| `legendre!`  |     360 |                 137.228 µs |                    60.868 µs |  2.25 x |
-| `dlegendre!` |      10 |                   0.097 µs |                     0.062 µs |  1.56 x |
-| `dlegendre!` |      60 |                   3.116 µs |                     1.737 µs |  1.79 x |
-| `dlegendre!` |     360 |                 108.809 µs |                    60.055 µs |  1.81 x |
+| `legendre!`  |      10 |                   0.132 µs |                     0.063 µs |  2.10 x |
+| `legendre!`  |      60 |                   3.924 µs |                     1.691 µs |  2.32 x |
+| `legendre!`  |     360 |                 137.228 µs |                    53.911 µs |  2.55 x |
+| `dlegendre!` |      10 |                   0.097 µs |                     0.059 µs |  1.64 x |
+| `dlegendre!` |      60 |                   3.116 µs |                     1.446 µs |  2.15 x |
+| `dlegendre!` |     360 |                 108.809 µs |                    48.532 µs |  2.24 x |
 
 ## Normalizations
 

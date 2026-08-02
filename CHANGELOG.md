@@ -8,7 +8,9 @@ Version 1.2.0
   precomputed recursion coefficients. The new methods `legendre!(P, ϕ, coefs, ...)` and
   `dlegendre!(dP, ϕ, P, coefs, ...)` use it to avoid evaluating square roots at every
   call, largely improving the performance when the functions are evaluated at many angles
-  with the same maximum degree and order.
+  with the same maximum degree and order. The coefficients are stored in packed vectors
+  containing only the lower triangular part of the coefficient set, halving the memory
+  usage compared to dense matrices.
 - ![Enhancement][badge-enhancement] Remove type instabilities when the configuration
   integers are not `Int` and when the element types of `dP` and `P` differ in the
   derivative computation.

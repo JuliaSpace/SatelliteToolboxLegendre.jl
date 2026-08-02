@@ -120,3 +120,25 @@ end
            Maximum order : 3"""
     @test sprint(show, MIME("text/plain"), coefs) == expected
 end
+
+@testset "Packed Storage" begin
+    # When `m_max == n_max`, the packed storage must contain only the lower triangular
+    # part of the coefficient set.
+    coefs = LegendreCoefficients(Val(:full), 60)
+    @test length(coefs.a)  == 61 * 62 ÷ 2
+    @test length(coefs.b)  == 61 * 62 ÷ 2
+    @test length(coefs.da) == 61 * 62 ÷ 2
+    @test length(coefs.db) == 61 * 62 ÷ 2
+
+    # When `m_max < n_max`, the storage must be clamped at the maximum order.
+    coefs = LegendreCoefficients(Val(:full), 3, 1)
+
+    # `a` and `b` support one additional order (`m_max_P = 2`): rows with 1, 2, 3, 3
+    # elements.
+    @test length(coefs.a) == 9
+    @test length(coefs.b) == 9
+
+    # `da` and `db` are clamped at `m_max = 1`: rows with 1, 2, 2, 2 elements.
+    @test length(coefs.da) == 7
+    @test length(coefs.db) == 7
+end

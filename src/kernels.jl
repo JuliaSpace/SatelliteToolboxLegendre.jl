@@ -368,7 +368,8 @@ end
 @inline function _kernel_legendre_ab(
     coefs::LegendreCoefficients, aux, ::Type{T}, n::Int, m::Int
 ) where {T}
-    return @inbounds coefs.a[n + 1, m + 1], coefs.b[n + 1, m + 1]
+    i = _packed_index(n, m, coefs.m_max_P)
+    return @inbounds coefs.a[i], coefs.b[i]
 end
 
 # == Derivative Coefficients ===============================================================
@@ -425,7 +426,7 @@ end
 @inline function _kernel_dlegendre_a(
     coefs::LegendreCoefficients, ::Type{T}, n::Int, m::Int
 ) where {T}
-    return @inbounds coefs.da[n + 1, m + 1]
+    return @inbounds coefs.da[_packed_index(n, m, coefs.m_max)]
 end
 
 """
@@ -457,5 +458,5 @@ end
 @inline function _kernel_dlegendre_b(
     coefs::LegendreCoefficients, ::Type{T}, n::Int, m::Int
 ) where {T}
-    return @inbounds coefs.db[n + 1, m + 1]
+    return @inbounds coefs.db[_packed_index(n, m, coefs.m_max)]
 end

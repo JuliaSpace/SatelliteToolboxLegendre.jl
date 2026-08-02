@@ -63,12 +63,15 @@ function LegendreCoefficients(
     # required by the derivative can be computed with the same object.
     m_max_P = min(m_max + 1, n_max)
 
+    len_P = _packed_length(n_max, m_max_P)
+    len_d = _packed_length(n_max, m_max)
+
     seed = _kernel_seed(N, T)
-    diag = zeros(T, n_max + 1)
-    a    = zeros(T, n_max + 1, m_max_P + 1)
-    b    = zeros(T, n_max + 1, m_max_P + 1)
-    da   = zeros(T, n_max + 1, m_max + 1)
-    db   = zeros(T, n_max + 1, m_max + 1)
+    diag = _zeros_storage(T, n_max + 1)
+    a    = _zeros_storage(T, len_P)
+    b    = _zeros_storage(T, len_P)
+    da   = _zeros_storage(T, len_d)
+    db   = _zeros_storage(T, len_d)
 
     _fill_legendre_coefficients!(N, diag, a, b, n_max, m_max_P)
     _fill_dlegendre_coefficients!(N, da, db, n_max, m_max)
@@ -94,18 +97,18 @@ _normalization(::Val{:schmidt}) = :schmidt
 _normalization(::Val{:unnormalized}) = :unnormalized
 
 """
-    _fill_legendre_coefficients!(N::Val, diag::Vector{T}, a::Matrix{T}, b::Matrix{T}, n_max::Integer, m_max::Integer) where T<:AbstractFloat -> Nothing
+    _fill_legendre_coefficients!(N::Val, diag::_PackedStorage{T}, a::_PackedStorage{T}, b::_PackedStorage{T}, n_max::Integer, m_max::Integer) where T<:AbstractFloat -> Nothing
 
-Fill the vector `diag` and the matrices `a` and `b` with the coefficients used to compute
-the associated Legendre function with the normalization `N` up to the degree `n_max` and
-order `m_max`. The values are precisely those computed on the fly by the kernel in
-`src/kernels.jl`.
+Fill the packed storages `diag`, `a`, and `b` with the coefficients used to compute the
+associated Legendre function with the normalization `N` up to the degree `n_max` and order
+`m_max`. The values are precisely those computed on the fly by the kernel in
+`src/kernels.jl`, and `a` and `b` are laid out as described in `_packed_index`.
 """
 function _fill_legendre_coefficients!(
     N::Union{Val{:full}, Val{:schmidt}, Val{:unnormalized}},
-    diag::Vector{T},
-    a::Matrix{T},
-    b::Matrix{T},
+    diag::_PackedStorage{T},
+    a::_PackedStorage{T},
+    b::_PackedStorage{T},
     n_max::Integer,
     m_max::Integer,
 ) where {T <: AbstractFloat}
@@ -115,7 +118,8 @@ function _fill_legendre_coefficients!(
         diag[n + 1] = _kernel_legendre_diag(N, T, n)
 
         for m in 0:min(n - 1, m_max)
-            a[n + 1, m + 1], b[n + 1, m + 1] = _kernel_legendre_ab(N, aux, T, n, m)
+            i = _packed_index(n, m, m_max)
+            a[i], b[i] = _kernel_legendre_ab(N, aux, T, n, m)
         end
     end
 
@@ -123,27 +127,30 @@ function _fill_legendre_coefficients!(
 end
 
 """
-    _fill_dlegendre_coefficients!(N::Val, da::Matrix{T}, db::Matrix{T}, n_max::Integer, m_max::Integer) where T<:AbstractFloat -> Nothing
+    _fill_dlegendre_coefficients!(N::Val, da::_PackedStorage{T}, db::_PackedStorage{T}, n_max::Integer, m_max::Integer) where T<:AbstractFloat -> Nothing
 
-Fill the matrices `da` and `db` with the coefficients used to compute the first-order
-derivative of the associated Legendre function with the normalization `N` up to the degree
-`n_max` and order `m_max`. The values are precisely those computed on the fly by the
-kernel in `src/kernels.jl`.
+Fill the packed storages `da` and `db` with the coefficients used to compute the
+first-order derivative of the associated Legendre function with the normalization `N` up
+to the degree `n_max` and order `m_max`. The values are precisely those computed on the
+fly by the kernel in `src/kernels.jl`, and `da` and `db` are laid out as described in
+`_packed_index`.
 """
 function _fill_dlegendre_coefficients!(
     N::Union{Val{:full}, Val{:schmidt}, Val{:unnormalized}},
-    da::Matrix{T},
-    db::Matrix{T},
+    da::_PackedStorage{T},
+    db::_PackedStorage{T},
     n_max::Integer,
     m_max::Integer,
 ) where {T <: AbstractFloat}
     @inbounds for n in 1:n_max
         for m in 0:min(n, m_max)
-            da[n + 1, m + 1] = _kernel_dlegendre_a(N, T, n, m)
+            i = _packed_index(n, m, m_max)
+
+            da[i] = _kernel_dlegendre_a(N, T, n, m)
 
             # The coefficient `b_nm` is not used when `n == m`.
             if (m > 0) && (n != m)
-                db[n + 1, m + 1] = _kernel_dlegendre_b(N, T, n, m)
+                db[i] = _kernel_dlegendre_b(N, T, n, m)
             end
         end
     end
