@@ -101,8 +101,12 @@ function fully_normalized_legendre!(
             continue
         end
 
-        aux_an = T(2n - 1) * T(2n + 1)
-        aux_bn = T(2n + 1) / T(2n - 3)
+        # Compute the square roots of the terms that depend only on `n` outside the inner
+        # loop. Using ratios of already-rooted factors avoids products that can overflow or
+        # lose precision at very high degrees.
+        sq_2n_p_1 = √T(2n + 1)
+        aux_an    = √T(2n - 1) * sq_2n_p_1 # ..................... √((2n - 1) * (2n + 1))
+        aux_bn    = sq_2n_p_1 / √T(2n - 3) # ....................... √((2n + 1) / (2n - 3))
 
         for m in 0:n
             P_nm = zero(T)
@@ -111,9 +115,9 @@ function fully_normalized_legendre!(
                 P_nm = s_fact * √(T(2n + 1) / T(2n)) * P[i₀ + n - 1, j₀ + n - 1]
 
             else
-                aux_nm = T(n - m) * T(n + m)
-                a_nm   = √(aux_an / aux_nm) * c
-                b_nm   = √(T(n + m - 1) * T(n - m - 1) * aux_bn / aux_nm)
+                aux_nm = √(T(n - m) * T(n + m))
+                a_nm   = aux_an / aux_nm * c
+                b_nm   = √(T(n + m - 1) * T(n - m - 1)) * aux_bn / aux_nm
 
                 # We assume that the matrix is not initialized. Hence, we must not access
                 # elements on the upper triangle.
