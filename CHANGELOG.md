@@ -25,7 +25,13 @@ Version 1.2.0
   the algorithm silently read memory outside the matrix bounds in this case, leading to
   wrong results.
 - ![Info][badge-info] Many documentation errors were fixed in the docstrings and in the
-  README.md file.
+  README.md file. Additionally, all the internal functions are now documented.
+- ![Info][badge-info] The source code was restructured. The recursions are now implemented
+  in a single generic kernel per operation, shared by all the normalizations and by the
+  methods that use the precomputed coefficients. Hence, the internal functions
+  `fully_normalized_legendre!`, `schmidt_quasi_normalized_legendre!`,
+  `unnormalized_legendre!`, their non-mutating and derivative counterparts were removed.
+  Those functions were never exported or declared public.
 
 Version 1.1.3
 -------------
