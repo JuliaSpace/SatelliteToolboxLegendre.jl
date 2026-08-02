@@ -125,7 +125,7 @@ function unnormalized_legendre(
     m_max::Integer = -1;
     ph_term::Bool = false
 ) where T<:Number
-    n_max < 0 && throw(ArgumentError("n_max must be positive."))
+    n_max < 0 && throw(ArgumentError("n_max must not be negative."))
 
     if (m_max < 0) || (m_max > n_max)
         m_max = n_max
