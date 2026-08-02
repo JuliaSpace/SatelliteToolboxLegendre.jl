@@ -154,7 +154,7 @@ function fully_normalized_dlegendre!(
                 end
             end
 
-            dP[i₀ + n, j₀ + m] = fact * dP_nm
+            dP[di₀ + n, dj₀ + m] = fact * dP_nm
 
             # Check if the maximum desired order has been reached.
             m >= m_max && break
