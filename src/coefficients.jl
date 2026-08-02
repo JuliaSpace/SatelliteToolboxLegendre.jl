@@ -90,13 +90,25 @@ end
 #                                    Private Functions                                     #
 ############################################################################################
 
-# Return the symbol of the normalization related to the value `N`.
-_normalization(::Val{:full})         = :full
-_normalization(::Val{:schmidt})      = :schmidt
+"""
+    _normalization(N::Val) -> Symbol
+
+Return the symbol of the normalization related to the value `N`.
+"""
+_normalization(::Val{:full}) = :full
+
+_normalization(::Val{:schmidt}) = :schmidt
+
 _normalization(::Val{:unnormalized}) = :unnormalized
 
-# Fill the coefficients used to compute the associated Legendre function. The values are
-# precisely those computed on the fly by the kernel in `src/kernels.jl`.
+"""
+    _fill_legendre_coefficients!(N::Val, diag::Vector{T}, a::Matrix{T}, b::Matrix{T}, n_max::Integer, m_max::Integer) where T<:AbstractFloat -> Nothing
+
+Fill the vector `diag` and the matrices `a` and `b` with the coefficients used to compute
+the associated Legendre function with the normalization `N` up to the degree `n_max` and
+order `m_max`. The values are precisely those computed on the fly by the kernel in
+`src/kernels.jl`.
+"""
 function _fill_legendre_coefficients!(
     N::Union{Val{:full}, Val{:schmidt}, Val{:unnormalized}},
     diag::Vector{T},
@@ -118,9 +130,14 @@ function _fill_legendre_coefficients!(
     return nothing
 end
 
-# Fill the coefficients used to compute the first-order derivative of the associated
-# Legendre function. The values are precisely those computed on the fly by the kernel in
-# `src/kernels.jl`.
+"""
+    _fill_dlegendre_coefficients!(N::Val, da::Matrix{T}, db::Matrix{T}, n_max::Integer, m_max::Integer) where T<:AbstractFloat -> Nothing
+
+Fill the matrices `da` and `db` with the coefficients used to compute the first-order
+derivative of the associated Legendre function with the normalization `N` up to the degree
+`n_max` and order `m_max`. The values are precisely those computed on the fly by the
+kernel in `src/kernels.jl`.
+"""
 function _fill_dlegendre_coefficients!(
     N::Union{Val{:full}, Val{:schmidt}, Val{:unnormalized}},
     da::Matrix{T},

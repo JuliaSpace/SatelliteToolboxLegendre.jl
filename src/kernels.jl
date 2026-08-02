@@ -42,9 +42,35 @@
 #                                     Legendre Kernel                                      #
 ############################################################################################
 
-# Compute the associated Legendre function `P_n,m[cos(ϕ)]` up to the degree `n_max` and
-# order `m_max` using the coefficient provider `coefs`, storing the result in `P`. All the
-# arithmetic operations are performed using the type `T`.
+"""
+    _legendre_kernel!(P::AbstractMatrix, ϕ::Number, coefs, n_max::Int, m_max::Int, ph_term::Bool, ::Type{T}) where T<:Number -> Nothing
+
+Compute the associated Legendre function `P_n,m[cos(ϕ)]` up to the degree `n_max` and
+order `m_max`, storing the result in the matrix `P`. All the arithmetic operations are
+performed using the type `T`.
+
+The argument `coefs` selects the coefficient provider. If it is a `Val` selecting the
+normalization (`Val(:full)`, `Val(:schmidt)`, or `Val(:unnormalized)`), the recursion
+coefficients are computed on the fly. If it is a [`LegendreCoefficients`](@ref) object,
+the coefficients are read from the precomputed arrays.
+
+!!! warning
+
+    This function does not validate the inputs. The caller must ensure that `P` has at
+    least `n_max + 1` rows and `m_max + 1` columns, and, if `coefs` is a
+    [`LegendreCoefficients`](@ref) object, that it supports the degree `n_max` and the
+    order `m_max`.
+
+# Arguments
+
+- `P::AbstractMatrix`: Matrix to store the result.
+- `ϕ::Number`: Angle [rad].
+- `coefs::Union{Val, LegendreCoefficients}`: Coefficient provider.
+- `n_max::Int`: Maximum degree that will be computed.
+- `m_max::Int`: Maximum order that will be computed.
+- `ph_term::Bool`: If `true`, the Condon-Shortley phase term `(-1)^m` will be included.
+- `::Type{T}`: Type used for the arithmetic operations.
+"""
 function _legendre_kernel!(
     P::AbstractMatrix,
     ϕ::Number,
@@ -125,11 +151,39 @@ end
 #                                    Derivative Kernel                                     #
 ############################################################################################
 
-# Compute the first-order derivative of the associated Legendre function `P_n,m[cos(ϕ)]`
-# with respect to `ϕ` up to the degree `n_max` and order `m_max` using the coefficient
-# provider `coefs`, storing the result in `dP`. The matrix `P` must contain the values of
-# the associated Legendre function with the same normalization. All the arithmetic
-# operations are performed using the type `T`.
+"""
+    _dlegendre_kernel!(dP::AbstractMatrix, ϕ::Number, P::AbstractMatrix, coefs, n_max::Int, m_max::Int, ph_term::Bool, ::Type{T}) where T<:Number -> Nothing
+
+Compute the first-order derivative of the associated Legendre function `P_n,m[cos(ϕ)]`
+with respect to `ϕ` [rad] up to the degree `n_max` and order `m_max`, storing the result
+in the matrix `dP`. The matrix `P` must contain the values of the associated Legendre
+function with the same normalization. All the arithmetic operations are performed using
+the type `T`.
+
+The argument `coefs` selects the coefficient provider. If it is a `Val` selecting the
+normalization (`Val(:full)`, `Val(:schmidt)`, or `Val(:unnormalized)`), the derivative
+coefficients are computed on the fly. If it is a [`LegendreCoefficients`](@ref) object,
+the coefficients are read from the precomputed arrays.
+
+!!! warning
+
+    This function does not validate the inputs. The caller must ensure that `dP` has at
+    least `n_max + 1` rows and `m_max + 1` columns, that `P` has at least `n_max + 1` rows
+    and `m_max + 2` columns if `m_max < n_max` or `m_max + 1` columns otherwise, and, if
+    `coefs` is a [`LegendreCoefficients`](@ref) object, that it supports the degree
+    `n_max` and the order `m_max`.
+
+# Arguments
+
+- `dP::AbstractMatrix`: Matrix to store the result.
+- `ϕ::Number`: Angle [rad].
+- `P::AbstractMatrix`: Matrix with the values of the associated Legendre function.
+- `coefs::Union{Val, LegendreCoefficients}`: Coefficient provider.
+- `n_max::Int`: Maximum degree that will be computed.
+- `m_max::Int`: Maximum order that will be computed.
+- `ph_term::Bool`: If `true`, the Condon-Shortley phase term `(-1)^m` will be included.
+- `::Type{T}`: Type used for the arithmetic operations.
+"""
 function _dlegendre_kernel!(
     dP::AbstractMatrix,
     ϕ::Number,
@@ -212,16 +266,33 @@ end
 
 # == Seed ==================================================================================
 
-# Return the coefficient of the terms with degree 1.
-@inline _kernel_seed(::Val{:full}, ::Type{T}) where T         = √T(3)
-@inline _kernel_seed(::Val{:schmidt}, ::Type{T}) where T      = one(T)
+"""
+    _kernel_seed(coefs, ::Type{T}) where T<:Number -> T
+
+Return the coefficient of the terms with degree 1 of the associated Legendre function
+recursion using the type `T`. If `coefs` is a `Val` selecting the normalization, the
+coefficient is computed on the fly. If it is a [`LegendreCoefficients`](@ref) object, the
+precomputed value is returned.
+"""
+@inline _kernel_seed(::Val{:full}, ::Type{T}) where T = √T(3)
+
+@inline _kernel_seed(::Val{:schmidt}, ::Type{T}) where T = one(T)
+
 @inline _kernel_seed(::Val{:unnormalized}, ::Type{T}) where T = one(T)
+
 @inline _kernel_seed(coefs::LegendreCoefficients, ::Type{T}) where T = coefs.seed
 
 # == Legendre Function Coefficients ========================================================
 
-# Return the auxiliary terms of the Legendre function recursion that depend only on the
-# degree `n`.
+"""
+    _kernel_legendre_aux(coefs, ::Type{T}, n::Int) where T<:Number -> Union{Nothing, Tuple}
+
+Return the auxiliary terms of the associated Legendre function recursion that depend only
+on the degree `n`, computed using the type `T`. If `coefs` is a `Val` selecting the
+normalization, the terms are computed on the fly and returned in a tuple. If it is a
+[`LegendreCoefficients`](@ref) object, no auxiliary term is required and the function
+returns `nothing`.
+"""
 @inline function _kernel_legendre_aux(::Val{:full}, ::Type{T}, n::Int) where T
     # Compute the square roots of the terms that depend only on `n` outside the inner
     # loop. Using ratios of already-rooted factors avoids products that can overflow or
@@ -233,19 +304,49 @@ end
     )
 end
 
-@inline _kernel_legendre_aux(::Val{:schmidt}, ::Type{T}, n::Int) where T      = (T(2n - 1),)
-@inline _kernel_legendre_aux(::Val{:unnormalized}, ::Type{T}, n::Int) where T = (T(2n - 1),)
+@inline _kernel_legendre_aux(::Val{:schmidt}, ::Type{T}, n::Int) where T = (T(2n - 1),)
+
+@inline function _kernel_legendre_aux(::Val{:unnormalized}, ::Type{T}, n::Int) where T
+    return (T(2n - 1),)
+end
+
 @inline _kernel_legendre_aux(::LegendreCoefficients, ::Type{T}, n::Int) where T = nothing
 
-# Return the coefficient of the diagonal recursion (`n == m`) of the Legendre function.
-@inline _kernel_legendre_diag(::Val{:full}, ::Type{T}, n::Int) where T    = √(T(2n + 1) / T(2n))
-@inline _kernel_legendre_diag(::Val{:schmidt}, ::Type{T}, n::Int) where T = √(T(2n - 1) / T(2n))
+"""
+    _kernel_legendre_diag(coefs, ::Type{T}, n::Int) where T<:Number -> T
+
+Return the coefficient of the diagonal recursion (`n == m`) of the associated Legendre
+function for the degree `n` using the type `T`. If `coefs` is a `Val` selecting the
+normalization, the coefficient is computed on the fly. If it is a
+[`LegendreCoefficients`](@ref) object, the precomputed value is returned.
+"""
+@inline function _kernel_legendre_diag(::Val{:full}, ::Type{T}, n::Int) where T
+    return √(T(2n + 1) / T(2n))
+end
+
+@inline function _kernel_legendre_diag(::Val{:schmidt}, ::Type{T}, n::Int) where T
+    return √(T(2n - 1) / T(2n))
+end
+
 @inline _kernel_legendre_diag(::Val{:unnormalized}, ::Type{T}, n::Int) where T = T(2n - 1)
-@inline function _kernel_legendre_diag(coefs::LegendreCoefficients, ::Type{T}, n::Int) where T
+
+@inline function _kernel_legendre_diag(
+    coefs::LegendreCoefficients,
+    ::Type{T},
+    n::Int
+) where T
     return @inbounds coefs.diag[n + 1]
 end
 
-# Return the coefficients `a_nm` and `b_nm` of the Legendre function recursion.
+"""
+    _kernel_legendre_ab(coefs, aux, ::Type{T}, n::Int, m::Int) where T<:Number -> T, T
+
+Return the coefficients `a_nm` and `b_nm` of the associated Legendre function recursion
+for the degree `n` and order `m` using the type `T`, where `aux` contains the auxiliary
+terms obtained from [`_kernel_legendre_aux`](@ref). If `coefs` is a `Val` selecting the
+normalization, the coefficients are computed on the fly. If it is a
+[`LegendreCoefficients`](@ref) object, the precomputed values are returned.
+"""
 @inline function _kernel_legendre_ab(::Val{:full}, aux, ::Type{T}, n::Int, m::Int) where T
     aux_nm = √(T(n - m) * T(n + m))
     a_nm   = aux[1] / aux_nm
@@ -253,14 +354,26 @@ end
     return a_nm, b_nm
 end
 
-@inline function _kernel_legendre_ab(::Val{:schmidt}, aux, ::Type{T}, n::Int, m::Int) where T
+@inline function _kernel_legendre_ab(
+    ::Val{:schmidt},
+    aux,
+    ::Type{T},
+    n::Int,
+    m::Int
+) where T
     aux_nm = √(T(n - m) * T(n + m))
     a_nm   = aux[1] / aux_nm
     b_nm   = √(T(n + m - 1) * T(n - m - 1)) / aux_nm
     return a_nm, b_nm
 end
 
-@inline function _kernel_legendre_ab(::Val{:unnormalized}, aux, ::Type{T}, n::Int, m::Int) where T
+@inline function _kernel_legendre_ab(
+    ::Val{:unnormalized},
+    aux,
+    ::Type{T},
+    n::Int,
+    m::Int
+) where T
     aux_nm = T(n - m)              # .......................... √((n - m) * (n - m))
     a_nm   = aux[1] / aux_nm
     b_nm   = T(n + m - 1) / aux_nm # ......... √((n + m - 1) * (n + m - 1)) / aux_nm
@@ -279,27 +392,36 @@ end
 
 # == Derivative Coefficients ===============================================================
 
-# Return the coefficient `a_nm` of the derivative equation.
-#
-# The coefficients for the full normalization are [5, p. 1981]:
-#
-#   a_nm = ¹/₂ . √(n + m) . √(n - m + 1) . √(C_{m} / C_{m-1}),
-#
-#   b_nm = ¹/₂ . √(n + m + 1) . √(n - m) . √(C_{m} / C_{m+1}),
-#
-#           ┌
-#           │ 1, m  = 0
-#   C_{m} = │
-#           │ 2, m != 0
-#           └
-#
-# NOTE: The conversion of the coefficients between the full normalization and the Schmidt
-# quasi-normalization is performed using:
-#
-#   √(2n + 1),
-#
-# which depends only on `n`. Since the derivative equation only has terms related to the
-# order `n`, the same coefficients work for both normalizations.
+"""
+    _kernel_dlegendre_a(coefs, ::Type{T}, n::Int, m::Int) where T<:Number -> T
+
+Return the coefficient `a_nm` of the derivative equation for the degree `n` and order `m`
+using the type `T`. If `coefs` is a `Val` selecting the normalization, the coefficient is
+computed on the fly. If it is a [`LegendreCoefficients`](@ref) object, the precomputed
+value is returned.
+
+# Extended help
+
+The coefficients for the full normalization are [5, p. 1981]:
+
+    a_nm = ¹/₂ . √(n + m) . √(n - m + 1) . √(C_{m} / C_{m-1}),
+
+    b_nm = ¹/₂ . √(n + m + 1) . √(n - m) . √(C_{m} / C_{m+1}),
+
+            ┌
+            │ 1, m  = 0
+    C_{m} = │
+            │ 2, m != 0
+            └
+
+The conversion of the coefficients between the full normalization and the Schmidt
+quasi-normalization is performed using:
+
+    √(2n + 1),
+
+which depends only on `n`. Since the derivative equation only has terms related to the
+order `n`, the same coefficients work for both normalizations.
+"""
 @inline function _kernel_dlegendre_a(
     ::Union{Val{:full}, Val{:schmidt}},
     ::Type{T},
@@ -315,16 +437,35 @@ end
     return √(T(n + m) * T(n - m + 1)) / 2
 end
 
-@inline function _kernel_dlegendre_a(::Val{:unnormalized}, ::Type{T}, n::Int, m::Int) where T
+@inline function _kernel_dlegendre_a(
+    ::Val{:unnormalized},
+    ::Type{T},
+    n::Int,
+    m::Int
+) where T
     (m == 0) && return one(T)
     return T(n + m) * T(n - m + 1) / 2
 end
 
-@inline function _kernel_dlegendre_a(coefs::LegendreCoefficients, ::Type{T}, n::Int, m::Int) where T
+@inline function _kernel_dlegendre_a(
+    coefs::LegendreCoefficients,
+    ::Type{T},
+    n::Int,
+    m::Int
+) where T
     return @inbounds coefs.da[n + 1, m + 1]
 end
 
-# Return the coefficient `b_nm` of the derivative equation.
+"""
+    _kernel_dlegendre_b(coefs, ::Type{T}, n::Int, m::Int) where T<:Number -> T
+
+Return the coefficient `b_nm` of the derivative equation for the degree `n` and order `m`
+using the type `T`. If `coefs` is a `Val` selecting the normalization, the coefficient is
+computed on the fly. If it is a [`LegendreCoefficients`](@ref) object, the precomputed
+value is returned.
+
+See [`_kernel_dlegendre_a`](@ref) for the definition of the coefficients.
+"""
 @inline function _kernel_dlegendre_b(
     ::Union{Val{:full}, Val{:schmidt}},
     ::Type{T},
@@ -338,8 +479,20 @@ end
     return √(T(n + m + 1) * T(n - m)) / 2
 end
 
-@inline _kernel_dlegendre_b(::Val{:unnormalized}, ::Type{T}, n::Int, m::Int) where T = T(1) / 2
+@inline function _kernel_dlegendre_b(
+    ::Val{:unnormalized},
+    ::Type{T},
+    n::Int,
+    m::Int
+) where T
+    return T(1) / 2
+end
 
-@inline function _kernel_dlegendre_b(coefs::LegendreCoefficients, ::Type{T}, n::Int, m::Int) where T
+@inline function _kernel_dlegendre_b(
+    coefs::LegendreCoefficients,
+    ::Type{T},
+    n::Int,
+    m::Int
+) where T
     return @inbounds coefs.db[n + 1, m + 1]
 end

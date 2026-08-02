@@ -4,8 +4,19 @@
 #
 ############################################################################################
 
-# Return the maximum degree and order to compute the Legendre associated functions given the
-# matrix `P` and the configuration values `n_max` and `m_max`.
+"""
+    _get_degree_and_order(P::AbstractMatrix, n_max::Integer, m_max::Integer) -> Int, Int
+
+Return the maximum degree and order to compute the associated Legendre functions given the
+matrix `P` and the configuration values `n_max` and `m_max`. If `n_max` or `m_max` are
+negative, the dimensions of `P` are used. The returned values are clamped so the
+computation always fits the matrix `P`.
+
+# Returns
+
+- `Int`: Maximum degree that must be computed.
+- `Int`: Maximum order that must be computed.
+"""
 function _get_degree_and_order(P::AbstractMatrix, n_max::Integer, m_max::Integer)
     # Convert the inputs to `Int` to ensure type stability.
     n_max = Int(n_max)
@@ -36,8 +47,21 @@ function _get_degree_and_order(P::AbstractMatrix, n_max::Integer, m_max::Integer
     return n_max, m_max
 end
 
-# Return the maximum degree and order to compute the derivative of the Legendre associated
-# functions given the matrices `dP`, `P`, and the configuration values `n_max` and `m_max`.
+"""
+    _get_degree_and_order(dP::AbstractMatrix, P::AbstractMatrix, n_max::Integer, m_max::Integer) -> Int, Int
+
+Return the maximum degree and order to compute the derivative of the associated Legendre
+functions given the matrices `dP` and `P`, and the configuration values `n_max` and
+`m_max`. If `n_max` or `m_max` are negative, the dimensions of `dP` are used. The returned
+values are clamped so the computation always fits the matrix `dP`. This function throws an
+`ArgumentError` if `P` does not have the dimensions required to compute the derivative
+with the resulting degree and order.
+
+# Returns
+
+- `Int`: Maximum degree that must be computed.
+- `Int`: Maximum order that must be computed.
+"""
 function _get_degree_and_order(
     dP::AbstractMatrix,
     P::AbstractMatrix,
