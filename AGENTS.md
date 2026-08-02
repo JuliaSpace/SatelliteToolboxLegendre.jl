@@ -2,7 +2,7 @@
 
 ## Package Structure
 
-- Single Julia package with zero runtime dependencies. Requires Julia 1.10 or newer (`[compat]` in `Project.toml`).
+- Single Julia package whose only runtime dependency is the standard library `StyledStrings` (used by the show methods in `src/show.jl`). Requires Julia 1.10 or newer (`[compat]` in `Project.toml`).
 - `src/SatelliteToolboxLegendre.jl` is the module entrypoint and controls the include order: `types.jl`, `misc.jl`, `kernels.jl`, `coefficients.jl`, `dlegendre.jl`, `legendre.jl`. All feature files are plain includes, so a file can only reference symbols defined in files included before it.
 - Public API (the only exported names): `legendre`, `legendre!`, `dlegendre`, `dlegendre!`, and `LegendreCoefficients`. Everything prefixed with `_` is internal.
 - The recursions are implemented once in `src/kernels.jl` as generic kernels (`_legendre_kernel!`, `_dlegendre_kernel!`) parameterized by a coefficient provider: a `Val` normalization (`Val(:full)`, `Val(:schmidt)`, `Val(:unnormalized)`) computes coefficients on the fly, while a `LegendreCoefficients` object reads precomputed arrays. Never duplicate a recursion loop; add or change coefficient providers instead.

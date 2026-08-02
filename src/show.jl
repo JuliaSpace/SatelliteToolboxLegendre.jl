@@ -4,12 +4,6 @@
 #
 ############################################################################################
 
-# Escape sequences of the ANSI codes used to print the types. Since this package has no
-# dependencies, we use the codes directly instead of the package Crayons.jl, which is used
-# by the other packages in the SatelliteToolbox.jl ecosystem.
-const _B = "\e[1m" # ........................................................ Bold sequence
-const _D = "\e[0m" # ....................................................... Reset sequence
-
 function Base.show(io::IO, coefs::LegendreCoefficients{N, T}) where {N, T}
     print(
         io,
@@ -31,15 +25,10 @@ function Base.show(
     ::MIME"text/plain",
     coefs::LegendreCoefficients{N, T}
 ) where {N, T}
-    # Check for color support in the `io`.
-    color = get(io, :color, false)
-    b = color ? _B : ""
-    d = color ? _D : ""
-
     println(io, "LegendreCoefficients{:", N, ", ", T, "}:")
-    println(io, "$(b)   Normalization :$(d) ", _normalization_name(Val(N)))
-    println(io, "$(b)  Maximum degree :$(d) ", coefs.n_max)
-    print(io,   "$(b)   Maximum order :$(d) ", coefs.m_max)
+    println(io, styled"{bold:   Normalization :} $(_normalization_name(Val(N)))")
+    println(io, styled"{bold:  Maximum degree :} $(coefs.n_max)")
+    print(io,   styled"{bold:   Maximum order :} $(coefs.m_max)")
 
     return nothing
 end
