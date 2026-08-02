@@ -87,14 +87,17 @@ function fully_normalized_dlegendre!(
     # order `n`, the same algorithm will work for both full normalization and Schmidt
     # quasi-normalization.
     #
-    # TODO: This algorithm is based on eq. Z.1.44 of [2]. However, it was verified that it
-    # does not provide the correct sign when ϕ ∈ [π, 2π]. This makes sense because the
-    # algorithm uses only the values of the coefficients, which are equal for ϕ and -ϕ.
-    # However, the derivative with respect to ϕ does change. This hack was used so that the
-    # values are correct, but further verification is needed.
-    #
-    # In fact, in [2, p. 119], it is mentioned that `0 <= ϕ <= π`.  However, further
-    # clarification is required.
+    # NOTE: This algorithm is based on eq. Z.1.44 of [2], which is valid only for
+    # ϕ ∈ [0, π] (see [2, p. 119]). In this package, the Legendre associated functions are
+    # computed using the convention that `sin(ϕ)` is always positive. Under this
+    # convention, the computed function is even about ϕ = 0 and ϕ = π. Hence, for
+    # ϕ ∈ (π, 2π), the derivative equals the negative of the value obtained from the
+    # coefficients, which is applied here using the variable `fact`. This behavior was
+    # verified numerically against finite differences of the values returned by the
+    # corresponding Legendre function for the entire circle, including angles outside
+    # [0, 2π]. At the points ϕ ∈ {0, π, 2π}, where the convention renders the computed
+    # function non-differentiable, this function returns the one-sided derivative (from
+    # the right at 0 and 2π, and from the left at π).
 
     ϕ    = mod(ϕ, T(2π))
     fact = ϕ > T(π) ? -1 : 1

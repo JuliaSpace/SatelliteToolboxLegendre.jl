@@ -363,3 +363,45 @@ end
         @test_throws ArgumentError dlegendre!(norm, dP, 0.123, P)
     end
 end
+
+@testset "Finite Difference Validation" begin
+    n_max = 5
+    h     = 1e-6
+
+    # The Legendre associated functions are computed using the convention that `sin(ϕ)` is
+    # always positive. Hence, the computed function is even about ϕ ∈ {0, π, 2π}, and the
+    # central finite differences are not valid at those points. We test them separately
+    # using one-sided finite differences.
+    ϕs = [
+        1e-4, 0.123, π / 2, π - 0.01, π + 0.01, 4.0, 3π / 2, 2π - 0.01, 2π + 0.5, 7.0,
+        -0.123, -2.0, 10.0
+    ]
+
+    for norm in (Val(:unnormalized), Val(:schmidt), Val(:full))
+        for ph_term in (false, true)
+            # == Central Finite Differences ================================================
+
+            for ϕ in ϕs
+                dP, ~ = dlegendre(norm, ϕ, n_max; ph_term = ph_term)
+                Pp    = legendre(norm, ϕ + h, n_max; ph_term = ph_term)
+                Pm    = legendre(norm, ϕ - h, n_max; ph_term = ph_term)
+                dP_fd = (Pp - Pm) / (2h)
+
+                @test maximum(abs.(dP - dP_fd) ./ max.(abs.(dP_fd), 1.0)) < 1e-6
+            end
+
+            # == One-Sided Finite Differences at ϕ ∈ {0, π, 2π} ============================
+
+            # At those points, the functions return the one-sided derivative (from the
+            # right at 0 and 2π, and from the left at π).
+            for (ϕ, side) in ((0.0, +1), (Float64(π), -1), (Float64(2π), +1))
+                dP, ~ = dlegendre(norm, ϕ, n_max; ph_term = ph_term)
+                Pa    = legendre(norm, ϕ + side * h, n_max; ph_term = ph_term)
+                P₀    = legendre(norm, ϕ, n_max; ph_term = ph_term)
+                dP_fd = side * (Pa - P₀) / h
+
+                @test maximum(abs.(dP - dP_fd) ./ max.(abs.(dP_fd), 1.0)) < 1e-3
+            end
+        end
+    end
+end
