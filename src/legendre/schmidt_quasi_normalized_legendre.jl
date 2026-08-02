@@ -125,7 +125,7 @@ function schmidt_quasi_normalized_legendre!(
 end
 
 """
-    schmidt_quasi_normalized_legendre(ϕ::T, n_max::Integer = -1, m_max::Integer = -1; kwargs...) where T<:Number -> Matrix{float(T)}
+    schmidt_quasi_normalized_legendre(ϕ::T, n_max::Integer, m_max::Integer = -1; kwargs...) where T<:Number -> Matrix{float(T)}
 
 Compute the Schmidt quasi-normalized associated Legendre function `P_n,m[cos(ϕ)]`. The
 maximum degree that will be computed is `n_max` and the maximum order is `m_max`. Notice
@@ -163,7 +163,7 @@ where `P̂_n,m` is the Schmidt quasi-normalized Legendre associated function.
 """
 function schmidt_quasi_normalized_legendre(
     ϕ::T,
-    n_max::Integer = -1,
+    n_max::Integer,
     m_max::Integer = -1;
     ph_term::Bool = false
 ) where T<:Number
