@@ -101,10 +101,10 @@ function unnormalized_dlegendre!(
             if m == 0
                 dP_nm = -T(P[i₀ + n, j₀ + 1])
             elseif n != m
-                dP_nm = ((n + m) * (n - m + 1) * T(P[i₀ + n, j₀ + m - 1]) -
+                dP_nm = (T(n + m) * T(n - m + 1) * T(P[i₀ + n, j₀ + m - 1]) -
                     T(P[i₀ + n, j₀ + m + 1])) / 2
             else
-                dP_nm = ((n + m) * (n - m + 1) * T(P[i₀ + n, j₀ + m - 1])) / 2
+                dP_nm = (T(n + m) * T(n - m + 1) * T(P[i₀ + n, j₀ + m - 1])) / 2
             end
 
             dP[di₀ + n, dj₀ + m] = fact * dP_nm
