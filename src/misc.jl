@@ -7,6 +7,10 @@
 # Return the maximum degree and order to compute the Legendre associated functions given the
 # matrix `P` and the configuration values `n_max` and `m_max`.
 function _get_degree_and_order(P::AbstractMatrix, n_max::Integer, m_max::Integer)
+    # Convert the inputs to `Int` to ensure type stability.
+    n_max = Int(n_max)
+    m_max = Int(m_max)
+
     # Get the size of the matrix.
     rows, cols = size(P)
 

@@ -311,3 +311,29 @@ end
     @test_throws ArgumentError legendre(Val(:schmidt), 0.123, -2)
     @test_throws ArgumentError legendre(Val(:full), 0.123, -2)
 end
+
+@testset "Type Stability" begin
+    # The internal function `_get_degree_and_order` must always return a `Tuple{Int, Int}`
+    # regardless of the type of the input integers.
+    P  = zeros(4, 4)
+    dP = zeros(4, 4)
+
+    @test (@inferred SatelliteToolboxLegendre._get_degree_and_order(
+        P,
+        Int32(3),
+        Int32(2)
+    )) === (3, 2)
+
+    @test (@inferred SatelliteToolboxLegendre._get_degree_and_order(
+        dP,
+        P,
+        Int32(3),
+        Int32(2)
+    )) === (3, 2)
+
+    @test (@inferred SatelliteToolboxLegendre._get_degree_and_order(
+        P,
+        UInt8(2),
+        UInt8(1)
+    )) === (2, 1)
+end
