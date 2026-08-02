@@ -28,7 +28,7 @@
                     P_ref = legendre(norm, ϕ, n_max, m_max; ph_term = ph_term)
 
                     P = zeros(T, n_max + 1, m_max + 1)
-                    legendre!(coefs, P, ϕ; ph_term = ph_term)
+                    legendre!(P, ϕ, coefs; ph_term = ph_term)
 
                     @test P == P_ref
                     @test eltype(P) == T
@@ -50,11 +50,11 @@ end
                     dP_ref, P_ref = dlegendre(norm, ϕ, n_max, m_max; ph_term = ph_term)
 
                     P = zeros(T, size(P_ref)...)
-                    legendre!(coefs, P, ϕ; ph_term = ph_term)
+                    legendre!(P, ϕ, coefs; ph_term = ph_term)
                     @test P == P_ref
 
                     dP = zeros(T, n_max + 1, m_max + 1)
-                    dlegendre!(coefs, dP, ϕ, P; ph_term = ph_term)
+                    dlegendre!(dP, ϕ, P, coefs; ph_term = ph_term)
 
                     @test dP ≈ dP_ref
                     @test eltype(dP) == T
@@ -73,15 +73,15 @@ end
         # The matrices require a degree or order higher than the ones supported by the
         # coefficients.
         P = zeros(6, 6)
-        @test_throws ArgumentError legendre!(coefs, P, 0.123)
+        @test_throws ArgumentError legendre!(P, 0.123, coefs)
 
         dP = zeros(6, 6)
-        @test_throws ArgumentError dlegendre!(coefs, dP, 0.123, P)
+        @test_throws ArgumentError dlegendre!(dP, 0.123, P, coefs)
 
         # The matrix `P` does not have the required dimensions to compute the derivative.
         coefs = LegendreCoefficients(norm, 3, 1)
         P  = zeros(4, 2)
         dP = zeros(4, 2)
-        @test_throws ArgumentError dlegendre!(coefs, dP, 0.123, P)
+        @test_throws ArgumentError dlegendre!(dP, 0.123, P, coefs)
     end
 end

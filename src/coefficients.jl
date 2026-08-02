@@ -80,11 +80,11 @@ julia> coefs = LegendreCoefficients(Val(:full), 60);
 
 julia> P = zeros(61, 61);
 
-julia> legendre!(coefs, P, 0.123)
+julia> legendre!(P, 0.123, coefs)
 
 julia> dP = zeros(61, 61);
 
-julia> dlegendre!(coefs, dP, 0.123, P)
+julia> dlegendre!(dP, 0.123, P, coefs)
 ```
 """
 function LegendreCoefficients(
@@ -134,7 +134,7 @@ end
 ############################################################################################
 
 """
-    legendre!(coefs::LegendreCoefficients{N, T}, P::AbstractMatrix, ϕ::Number, n_max::Integer = -1, m_max::Integer = -1; kwargs...) where {N, T<:AbstractFloat} -> Nothing
+    legendre!(P::AbstractMatrix, ϕ::Number, coefs::LegendreCoefficients{N, T}, n_max::Integer = -1, m_max::Integer = -1; kwargs...) where {N, T<:AbstractFloat} -> Nothing
 
 Compute the associated Legendre function `P_n,m[cos(ϕ)]` using the precomputed coefficients
 `coefs`, which also select the normalization (see [`LegendreCoefficients`](@ref)). The
@@ -158,9 +158,9 @@ using the element type `T` of the coefficients.
     (**Default** = `false`)
 """
 function legendre!(
-    coefs::LegendreCoefficients{N, T},
     P::AbstractMatrix,
     ϕ::Number,
+    coefs::LegendreCoefficients{N, T},
     n_max::Integer = -1,
     m_max::Integer = -1;
     ph_term::Bool = false
@@ -237,7 +237,7 @@ function legendre!(
 end
 
 """
-    dlegendre!(coefs::LegendreCoefficients{N, T}, dP::AbstractMatrix, ϕ::Number, P::AbstractMatrix, n_max::Integer = -1, m_max::Integer = -1; kwargs...) where {N, T<:AbstractFloat} -> Nothing
+    dlegendre!(dP::AbstractMatrix, ϕ::Number, P::AbstractMatrix, coefs::LegendreCoefficients{N, T}, n_max::Integer = -1, m_max::Integer = -1; kwargs...) where {N, T<:AbstractFloat} -> Nothing
 
 Compute the first-order derivative of the associated Legendre function `P_n,m[cos(ϕ)]`
 with respect to `ϕ` [rad] using the precomputed coefficients `coefs`, which also select the
@@ -273,10 +273,10 @@ throws an `ArgumentError` if `P` does not have the required dimensions.
     (**Default** = `false`)
 """
 function dlegendre!(
-    coefs::LegendreCoefficients{N, T},
     dP::AbstractMatrix,
     ϕ::Number,
     P::AbstractMatrix,
+    coefs::LegendreCoefficients{N, T},
     n_max::Integer = -1,
     m_max::Integer = -1;
     ph_term::Bool = false

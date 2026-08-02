@@ -5,8 +5,8 @@ Version 1.2.0
 -------------
 
 - ![Feature][badge-feature] Add the structure `LegendreCoefficients`, which stores
-  precomputed recursion coefficients. The new methods `legendre!(coefs, P, ϕ, ...)` and
-  `dlegendre!(coefs, dP, ϕ, P, ...)` use it to avoid evaluating square roots at every
+  precomputed recursion coefficients. The new methods `legendre!(P, ϕ, coefs, ...)` and
+  `dlegendre!(dP, ϕ, P, coefs, ...)` use it to avoid evaluating square roots at every
   call, largely improving the performance when the functions are evaluated at many angles
   with the same maximum degree and order.
 - ![Enhancement][badge-enhancement] Remove type instabilities when the configuration
