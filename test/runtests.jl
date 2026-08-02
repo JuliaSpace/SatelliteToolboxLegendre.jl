@@ -14,3 +14,7 @@ end
 @testset "Matrices With Offset Axes" verbose = true begin
     include("./offset_arrays.jl")
 end
+
+@testset "Precomputed Coefficients" verbose = true begin
+    include("./coefficients.jl")
+end

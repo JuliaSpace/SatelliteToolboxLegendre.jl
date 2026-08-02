@@ -16,5 +16,7 @@ include("./legendre/schmidt_quasi_normalized_legendre.jl")
 include("./legendre/unnormalized_legendre.jl")
 include("./legendre/legendre.jl")
 
+include("./coefficients.jl")
+
 
 end # module SatelliteToolboxLegendre

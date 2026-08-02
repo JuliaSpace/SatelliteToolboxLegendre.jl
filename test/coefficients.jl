@@ -1,0 +1,87 @@
+## Description #############################################################################
+#
+# Tests related to the computation of the Legendre associated functions and their
+#   derivatives using precomputed coefficients.
+#
+############################################################################################
+
+# == Structure: LegendreCoefficients =======================================================
+
+############################################################################################
+#                                       Test Results                                       #
+############################################################################################
+#
+# The results obtained using the precomputed coefficients must match those obtained using
+# the functions that compute the coefficients at every call.
+#
+############################################################################################
+
+@testset "Legendre Associated Functions" begin
+    for T in (Float64, Float32)
+        ϕ = T(0.123)
+
+        for norm in (Val(:unnormalized), Val(:schmidt), Val(:full))
+            for (n_max, m_max) in ((5, 5), (5, 3))
+                coefs = LegendreCoefficients(norm, n_max, m_max; T = T)
+
+                for ph_term in (false, true)
+                    P_ref = legendre(norm, ϕ, n_max, m_max; ph_term = ph_term)
+
+                    P = zeros(T, n_max + 1, m_max + 1)
+                    legendre!(coefs, P, ϕ; ph_term = ph_term)
+
+                    @test P == P_ref
+                    @test eltype(P) == T
+                end
+            end
+        end
+    end
+end
+
+@testset "Derivative of the Legendre Associated Functions" begin
+    for T in (Float64, Float32)
+        ϕ = T(0.123)
+
+        for norm in (Val(:unnormalized), Val(:schmidt), Val(:full))
+            for (n_max, m_max) in ((5, 5), (5, 3))
+                coefs = LegendreCoefficients(norm, n_max, m_max; T = T)
+
+                for ph_term in (false, true)
+                    dP_ref, P_ref = dlegendre(norm, ϕ, n_max, m_max; ph_term = ph_term)
+
+                    P = zeros(T, size(P_ref)...)
+                    legendre!(coefs, P, ϕ; ph_term = ph_term)
+                    @test P == P_ref
+
+                    dP = zeros(T, n_max + 1, m_max + 1)
+                    dlegendre!(coefs, dP, ϕ, P; ph_term = ph_term)
+
+                    @test dP ≈ dP_ref
+                    @test eltype(dP) == T
+                end
+            end
+        end
+    end
+end
+
+@testset "Errors" begin
+    for norm in (Val(:unnormalized), Val(:schmidt), Val(:full))
+        @test_throws ArgumentError LegendreCoefficients(norm, -2)
+
+        coefs = LegendreCoefficients(norm, 3)
+
+        # The matrices require a degree or order higher than the ones supported by the
+        # coefficients.
+        P = zeros(6, 6)
+        @test_throws ArgumentError legendre!(coefs, P, 0.123)
+
+        dP = zeros(6, 6)
+        @test_throws ArgumentError dlegendre!(coefs, dP, 0.123, P)
+
+        # The matrix `P` does not have the required dimensions to compute the derivative.
+        coefs = LegendreCoefficients(norm, 3, 1)
+        P  = zeros(4, 2)
+        dP = zeros(4, 2)
+        @test_throws ArgumentError dlegendre!(coefs, dP, 0.123, P)
+    end
+end
