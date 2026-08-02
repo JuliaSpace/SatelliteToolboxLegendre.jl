@@ -171,7 +171,7 @@ function fully_normalized_dlegendre!(
 end
 
 """
-    dlegendre_fully_normalized(ϕ::T, n_max::Integer, m_max::Integer = -1, ph_term::Bool = false) where T<:Number -> Matrix{float(T)}, Matrix{float(T)}
+    fully_normalized_dlegendre(ϕ::T, n_max::Integer, m_max::Integer = -1; kwargs...) where T<:Number -> Matrix{float(T)}, Matrix{float(T)}
 
 Compute the first-order derivative of the fully normalized associated Legendre function
 `P_n,m[cos(ϕ)]` with respect to `ϕ` [rad]:

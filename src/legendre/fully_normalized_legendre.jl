@@ -139,7 +139,7 @@ function fully_normalized_legendre!(
 end
 
 """
-    fully_normalized_legendre!(ϕ::T, n_max::Integer, m_max::Integer = -1; kwargs...) where T<:Number -> Matrix{float(T)}
+    fully_normalized_legendre(ϕ::T, n_max::Integer, m_max::Integer = -1; kwargs...) where T<:Number -> Matrix{float(T)}
 
 Compute the fully normalized associated Legendre function `P_n,m[cos(ϕ)]`. The maximum
 degree that will be computed is `n_max` and the maximum order is `m_max`. Notice that if

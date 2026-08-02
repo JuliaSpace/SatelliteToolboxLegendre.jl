@@ -16,7 +16,7 @@
 export dlegendre!, dlegendre
 
 """
-    dlegendre!(dP::AbstractMatrix, ϕ::Number, P::AbstractMatrix, n_max::Integer = -1, m_max::Integer = -1; kwargs...) -> Nothing
+    dlegendre!(N, dP::AbstractMatrix, ϕ::Number, P::AbstractMatrix, n_max::Integer = -1, m_max::Integer = -1; kwargs...) -> Nothing
 
 Compute the first-order derivative of the associated Legendre function `P_n,m[cos(ϕ)]` with
 respect to `ϕ` [rad]:
