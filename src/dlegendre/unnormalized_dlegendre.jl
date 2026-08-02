@@ -12,7 +12,7 @@
 # [2] Ilk, K. H.: Ein Beitrag zur Dynamik ausgedehnter Körper-Gravitationswechselwirkung,
 #     Deutsche Geodätische Kommission.  Reihe C, Heft Nr. 288, München, 1983.
 #
-# # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # # #
+############################################################################################
 
 """
     unnormalized_dlegendre!(dP::AbstractMatrix{T}, ϕ::Number, P::AbstractMatrix, n_max::Integer = -1, m_max::Integer = -1; kwargs...) where T<:Number -> Nothing
