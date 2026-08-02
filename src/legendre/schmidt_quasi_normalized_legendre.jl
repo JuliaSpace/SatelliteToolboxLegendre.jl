@@ -117,7 +117,7 @@ function schmidt_quasi_normalized_legendre!(
             P[i₀ + n, j₀ + m] = P_nm
 
             # Check if the maximum desired order has been reached.
-            m == m_max && break
+            m >= m_max && break
         end
     end
 
