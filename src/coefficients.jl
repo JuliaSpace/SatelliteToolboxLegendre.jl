@@ -63,7 +63,7 @@ function LegendreCoefficients(
     # required by the derivative can be computed with the same object.
     m_max_P = min(m_max + 1, n_max)
 
-    seed = _legendre_seed(N, T)
+    seed = _kernel_seed(N, T)
     diag = zeros(T, n_max + 1)
     a    = zeros(T, n_max + 1, m_max_P + 1)
     b    = zeros(T, n_max + 1, m_max_P + 1)
@@ -95,16 +95,10 @@ _normalization(::Val{:full})         = :full
 _normalization(::Val{:schmidt})      = :schmidt
 _normalization(::Val{:unnormalized}) = :unnormalized
 
-# Return the coefficient of the terms with degree 1 for the normalization `N` using the
-# element type `T`.
-_legendre_seed(::Val{:full}, T::Type)         = √T(3)
-_legendre_seed(::Val{:schmidt}, T::Type)      = one(T)
-_legendre_seed(::Val{:unnormalized}, T::Type) = one(T)
-
 # Fill the coefficients used to compute the associated Legendre function. The values are
-# precisely those computed by the kernels in `src/legendre/`.
+# precisely those computed on the fly by the kernel in `src/kernels.jl`.
 function _fill_legendre_coefficients!(
-    ::Val{:full},
+    N::Union{Val{:full}, Val{:schmidt}, Val{:unnormalized}},
     diag::Vector{T},
     a::Matrix{T},
     b::Matrix{T},
@@ -112,62 +106,12 @@ function _fill_legendre_coefficients!(
     m_max::Integer
 ) where T<:AbstractFloat
     @inbounds for n in 2:n_max
-        sq_2n_p_1 = √T(2n + 1)
-        aux_an    = √T(2n - 1) * sq_2n_p_1 # ..................... √((2n - 1) * (2n + 1))
-        aux_bn    = sq_2n_p_1 / √T(2n - 3) # ....................... √((2n + 1) / (2n - 3))
+        aux = _kernel_legendre_aux(N, T, n)
 
-        diag[n + 1] = √(T(2n + 1) / T(2n))
+        diag[n + 1] = _kernel_legendre_diag(N, T, n)
 
         for m in 0:min(n - 1, m_max)
-            aux_nm       = √(T(n - m) * T(n + m))
-            a[n + 1, m + 1] = aux_an / aux_nm
-            b[n + 1, m + 1] = √(T(n + m - 1) * T(n - m - 1)) * aux_bn / aux_nm
-        end
-    end
-
-    return nothing
-end
-
-function _fill_legendre_coefficients!(
-    ::Val{:schmidt},
-    diag::Vector{T},
-    a::Matrix{T},
-    b::Matrix{T},
-    n_max::Integer,
-    m_max::Integer
-) where T<:AbstractFloat
-    @inbounds for n in 2:n_max
-        aux_n = T(2n - 1)
-
-        diag[n + 1] = √(aux_n / T(2n))
-
-        for m in 0:min(n - 1, m_max)
-            aux_nm       = √(T(n - m) * T(n + m))
-            a[n + 1, m + 1] = aux_n / aux_nm
-            b[n + 1, m + 1] = √(T(n + m - 1) * T(n - m - 1)) / aux_nm
-        end
-    end
-
-    return nothing
-end
-
-function _fill_legendre_coefficients!(
-    ::Val{:unnormalized},
-    diag::Vector{T},
-    a::Matrix{T},
-    b::Matrix{T},
-    n_max::Integer,
-    m_max::Integer
-) where T<:AbstractFloat
-    @inbounds for n in 2:n_max
-        aux_n = T(2n - 1)
-
-        diag[n + 1] = aux_n
-
-        for m in 0:min(n - 1, m_max)
-            aux_nm       = T(n - m)
-            a[n + 1, m + 1] = aux_n / aux_nm
-            b[n + 1, m + 1] = T(n + m - 1) / aux_nm
+            a[n + 1, m + 1], b[n + 1, m + 1] = _kernel_legendre_ab(N, aux, T, n, m)
         end
     end
 
@@ -175,10 +119,10 @@ function _fill_legendre_coefficients!(
 end
 
 # Fill the coefficients used to compute the first-order derivative of the associated
-# Legendre function. The values are precisely those computed by the kernels in
-# `src/dlegendre/`.
+# Legendre function. The values are precisely those computed on the fly by the kernel in
+# `src/kernels.jl`.
 function _fill_dlegendre_coefficients!(
-    ::Union{Val{:full}, Val{:schmidt}},
+    N::Union{Val{:full}, Val{:schmidt}, Val{:unnormalized}},
     da::Matrix{T},
     db::Matrix{T},
     n_max::Integer,
@@ -186,35 +130,11 @@ function _fill_dlegendre_coefficients!(
 ) where T<:AbstractFloat
     @inbounds for n in 1:n_max
         for m in 0:min(n, m_max)
-            if m == 0
-                da[n + 1, 1] = √(T(n) * T(n + 1) / 2)
-            elseif m == 1
-                da[n + 1, 2] = √(T(2n) * T(n + 1)) / 2
-                (n > 1) && (db[n + 1, 2] = √(T(n + 2) * T(n - 1)) / 2)
-            else
-                da[n + 1, m + 1] = √(T(n + m) * T(n - m + 1)) / 2
-                (n != m) && (db[n + 1, m + 1] = √(T(n + m + 1) * T(n - m)) / 2)
-            end
-        end
-    end
+            da[n + 1, m + 1] = _kernel_dlegendre_a(N, T, n, m)
 
-    return nothing
-end
-
-function _fill_dlegendre_coefficients!(
-    ::Val{:unnormalized},
-    da::Matrix{T},
-    db::Matrix{T},
-    n_max::Integer,
-    m_max::Integer
-) where T<:AbstractFloat
-    @inbounds for n in 1:n_max
-        for m in 0:min(n, m_max)
-            if m == 0
-                da[n + 1, 1] = 1
-            else
-                da[n + 1, m + 1] = T(n + m) * T(n - m + 1) / 2
-                (n != m) && (db[n + 1, m + 1] = T(1) / 2)
+            # The coefficient `b_nm` is not used when `n == m`.
+            if (m > 0) && (n != m)
+                db[n + 1, m + 1] = _kernel_dlegendre_b(N, T, n, m)
             end
         end
     end

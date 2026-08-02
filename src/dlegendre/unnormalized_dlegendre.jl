@@ -59,62 +59,7 @@ function unnormalized_dlegendre!(
     # Obtain the maximum degree and order that must be computed.
     n_max, m_max = _get_degree_and_order(dP, P, n_max, m_max)
 
-    # The derivative is computed using the following equation [1, p. 1981]:
-    #
-    #   ∂P(n, m)
-    #   ──────── = ¹/₂ . ((n + m) . (n - m + 1) . P(n, m-1) - P(n, m+1)),
-    #      ∂θ
-    #
-    # NOTE: This algorithm is based on eq. Z.1.44 of [2], which is valid only for
-    # ϕ ∈ [0, π] (see [2, p. 119]). In this package, the Legendre associated functions are
-    # computed using the convention that `sin(ϕ)` is always positive. Under this
-    # convention, the computed function is even about ϕ = 0 and ϕ = π. Hence, for
-    # ϕ ∈ (π, 2π), the derivative equals the negative of the value obtained from the
-    # coefficients, which is applied here using the variable `fact`. This behavior was
-    # verified numerically against finite differences of the values returned by the
-    # corresponding Legendre function for the entire circle, including angles outside
-    # [0, 2π]. At the points ϕ ∈ {0, π, 2π}, where the convention renders the computed
-    # function non-differentiable, this function returns the one-sided derivative (from
-    # the right at 0 and 2π, and from the left at π).
-
-    ϕ    = mod(ϕ, T(2π))
-    fact = ϕ > T(π) ? -1 : 1
-
-    if ph_term
-        fact *= -1
-    end
-
-    # Get the first indices in `P` to take into account offset arrays.
-    i₀, j₀ = first.(axes(P))
-
-    # Get the first indices in `dP` to take into account offset arrays.
-    di₀, dj₀ = first.(axes(dP))
-
-    dP[di₀, dj₀] = 0
-
-    m_max < 0 && return nothing
-
-    @inbounds for n in 1:n_max
-        for m in 0:n
-            dP_nm = zero(T)
-
-            if m == 0
-                dP_nm = -T(P[i₀ + n, j₀ + 1])
-            elseif n != m
-                dP_nm = (T(n + m) * T(n - m + 1) * T(P[i₀ + n, j₀ + m - 1]) -
-                    T(P[i₀ + n, j₀ + m + 1])) / 2
-            else
-                dP_nm = (T(n + m) * T(n - m + 1) * T(P[i₀ + n, j₀ + m - 1])) / 2
-            end
-
-            dP[di₀ + n, dj₀ + m] = fact * dP_nm
-
-            # Check if the maximum desired order has been reached.
-            m >= m_max && break
-        end
-    end
-
-    return nothing
+    return _dlegendre_kernel!(dP, ϕ, P, Val(:unnormalized), n_max, m_max, ph_term, T)
 end
 
 """

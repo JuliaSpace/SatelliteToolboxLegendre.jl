@@ -213,42 +213,5 @@ function dlegendre!(
         ))
     end
 
-    # See the kernels in `src/dlegendre/` for the definition of the variable `fact`.
-    ϕ    = mod(ϕ, T(2π))
-    fact = ϕ > T(π) ? -1 : 1
-
-    if ph_term
-        fact *= -1
-    end
-
-    # Get the first indices in `P` to take into account offset arrays.
-    i₀, j₀ = first.(axes(P))
-
-    # Get the first indices in `dP` to take into account offset arrays.
-    di₀, dj₀ = first.(axes(dP))
-
-    dP[di₀, dj₀] = 0
-
-    @inbounds for n in 1:n_max
-        for m in 0:n
-            dP_nm = zero(T)
-
-            if m == 0
-                dP_nm = -coefs.da[n + 1, 1] * T(P[i₀ + n, j₀ + 1])
-            else
-                dP_nm = coefs.da[n + 1, m + 1] * T(P[i₀ + n, j₀ + m - 1])
-
-                if n != m
-                    dP_nm -= coefs.db[n + 1, m + 1] * T(P[i₀ + n, j₀ + m + 1])
-                end
-            end
-
-            dP[di₀ + n, dj₀ + m] = fact * dP_nm
-
-            # Check if the maximum desired order has been reached.
-            m >= m_max && break
-        end
-    end
-
-    return nothing
+    return _dlegendre_kernel!(dP, ϕ, P, coefs, n_max, m_max, ph_term, T)
 end

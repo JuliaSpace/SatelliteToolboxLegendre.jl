@@ -7,6 +7,7 @@ module SatelliteToolboxLegendre
 include("./types.jl")
 
 include("./misc.jl")
+include("./kernels.jl")
 include("./coefficients.jl")
 
 include("./dlegendre/fully_normalized_dlegendre.jl")
