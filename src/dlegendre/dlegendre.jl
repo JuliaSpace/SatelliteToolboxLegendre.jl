@@ -41,7 +41,10 @@ The parameter `N` selects the normalization. The following values are valid:
 
 This algorithm needs the matrix `P` with the values of the associated Legendre function
 using the same normalization `N`, which can be computed using the function
-[`legendre`](@ref).
+[`legendre`](@ref). The algorithm accesses the terms `P[n, m + 1]` when the order `m` is
+lower than the degree `n`. Hence, the matrix `P` must have at least `n_max + 1` rows and
+`m_max + 2` columns if `m_max < n_max`, or `m_max + 1` columns otherwise. This function
+throws an `ArgumentError` if `P` does not have the required dimensions.
 
 !!! warning
 

@@ -33,7 +33,11 @@ The maximum degree and order that will be computed are given by the parameters `
 The derivatives will be stored in the matrix `dP`.
 
 This algorithm needs the matrix `P` with the values of the unnormalized associated Legendre
-function. This can be computed using the function [`unnormalized_legendre!`](@ref).
+function. This can be computed using the function [`unnormalized_legendre!`](@ref). The
+algorithm accesses the terms `P[n, m + 1]` when the order `m` is lower than the degree `n`.
+Hence, the matrix `P` must have at least `n_max + 1` rows and `m_max + 2` columns if
+`m_max < n_max`, or `m_max + 1` columns otherwise. This function throws an `ArgumentError`
+if `P` does not have the required dimensions.
 
 !!! warning
     The user is responsible to pass a matrix `P` with the correct values. For example, if

@@ -34,7 +34,11 @@ The derivatives will be stored in the matrix `dP`.
 
 This algorithm needs the matrix `P` with the values of the fully normalized associated
 Legendre function. This can be computed using the function
-[`fully_normalized_legendre!`](@ref).
+[`fully_normalized_legendre!`](@ref). The algorithm accesses the terms `P[n, m + 1]` when
+the order `m` is lower than the degree `n`. Hence, the matrix `P` must have at least
+`n_max + 1` rows and `m_max + 2` columns if `m_max < n_max`, or `m_max + 1` columns
+otherwise. This function throws an `ArgumentError` if `P` does not have the required
+dimensions.
 
 !!! warning
 

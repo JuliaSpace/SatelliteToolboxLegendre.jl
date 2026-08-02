@@ -32,33 +32,28 @@ function _get_degree_and_order(P::AbstractMatrix, n_max::Integer, m_max::Integer
     return n_max, m_max
 end
 
-# Return the maximum degree and order to compute the Legendre associated functions given the
-# matrices `dP`, `P`, and the configuration values `n_max` and `m_max`.
-function _get_degree_and_order(dP, P, n_max, m_max)
-    # Get the size of the matrices.
-    Prows,  Pcols  = size(P)
-    dProws, dPcols = size(dP)
+# Return the maximum degree and order to compute the derivative of the Legendre associated
+# functions given the matrices `dP`, `P`, and the configuration values `n_max` and `m_max`.
+function _get_degree_and_order(
+    dP::AbstractMatrix,
+    P::AbstractMatrix,
+    n_max::Integer,
+    m_max::Integer
+)
+    # Obtain the maximum degree and order that fits the matrix `dP`.
+    n_max, m_max = _get_degree_and_order(dP, n_max, m_max)
 
-    rows = min(Prows, dProws)
-    cols = min(Pcols, dPcols)
+    # The algorithm that computes the derivative accesses the terms `P[n, m + 1]` when
+    # `m < n`. Hence, `P` must have an additional column if `m_max < n_max`.
+    P_rows, P_cols = size(P)
+    req_cols = (m_max < n_max) ? m_max + 2 : m_max + 1
 
-    # If the order or degree is less than 0, then the user wants to use all the available
-    # memory.
-    if n_max < 0
-        n_max = rows - 1
-    end
-
-    if m_max < 0
-        m_max = (cols <= rows) ? cols - 1 : n_max
-    end
-
-    # Make sure that the degree and order fits the matrix.
-    if n_max > rows - 1
-        n_max = rows - 1
-    end
-
-    if (m_max > cols - 1) || (m_max > n_max)
-        m_max = min(cols - 1, n_max)
+    if (P_rows < n_max + 1) || (P_cols < req_cols)
+        throw(ArgumentError(
+            "The matrix `P` must have at least $(n_max + 1) rows and $req_cols columns " *
+            "to compute the derivative with degree $n_max and order $m_max, but it has " *
+            "$P_rows rows and $P_cols columns."
+        ))
     end
 
     return n_max, m_max

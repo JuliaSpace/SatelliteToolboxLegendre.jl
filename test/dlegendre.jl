@@ -349,4 +349,17 @@ end
     @test_throws ArgumentError dlegendre(Val(:unnormalized), 0.123, -2)
     @test_throws ArgumentError dlegendre(Val(:schmidt), 0.123, -2)
     @test_throws ArgumentError dlegendre(Val(:full), 0.123, -2)
+
+    # The matrix `P` must have an additional column if `m_max < n_max` because the
+    # algorithm accesses the terms `P[n, m + 1]`.
+    for norm in (Val(:unnormalized), Val(:schmidt), Val(:full))
+        P = legendre(norm, 0.123, 3, 1)
+        dP = zeros(4, 2)
+        @test_throws ArgumentError dlegendre!(norm, dP, 0.123, P)
+
+        # The matrix `P` must also have enough rows to compute the desired degree.
+        P = legendre(norm, 0.123, 2)
+        dP = zeros(4, 4)
+        @test_throws ArgumentError dlegendre!(norm, dP, 0.123, P)
+    end
 end
