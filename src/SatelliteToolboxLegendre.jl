@@ -10,8 +10,8 @@ include("./misc.jl")
 include("./kernels.jl")
 include("./coefficients.jl")
 
-include("./dlegendre/dlegendre.jl")
-include("./legendre/legendre.jl")
+include("./dlegendre.jl")
+include("./legendre.jl")
 
 
 end # module SatelliteToolboxLegendre
