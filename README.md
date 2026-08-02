@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./docs/src/assets/logo.png" width="150" title="SatelliteToolboxTransformations.jl"><br>
+  <img src="./docs/src/assets/logo.png" width="150" title="SatelliteToolboxLegendre.jl"><br>
   <small><i>This package is part of the <a href="https://github.com/JuliaSpace/SatelliteToolbox.jl">SatelliteToolbox.jl</a> ecosystem.</i></small>
 </p>
 
@@ -13,7 +13,7 @@
 [![Code Style: Blue](https://img.shields.io/badge/code%20style-blue-4495D1?style=flat-square&logo=julia&logoColor=white&labelColor=475569)](https://github.com/invenia/BlueStyle)
 [![DOI](https://img.shields.io/badge/DOI-10.5281%2Fzenodo.11246481-DB2777?style=flat-square&logo=doi&logoColor=white&labelColor=475569)](https://zenodo.org/doi/10.5281/zenodo.11246481)
 
-This package contains function to compute the Legendre associated functions and its
+This package contains functions to compute the Legendre associated functions and their
 derivatives for the models in the **SatelliteToolbox.jl** ecosystem.
 
 ## Installation
@@ -142,7 +142,7 @@ It returns the following objects:
 - `Matrix{float(T)}`: A matrix with the first-order derivative of the Legendre associated
     functions $P_{n,m}\left[\cos(\phi)\right]$.
 - `Matrix{float(T)}`: A matrix with the Legendre associated functions
-    $P_{n,m}\left[\cos(\phi)\right]$`.
+    $P_{n,m}\left[\cos(\phi)\right]$.
 
 ```julia
 julia> dP, P = dlegendre(Val(:unnormalized), 0.45, 4)
@@ -203,7 +203,7 @@ julia> P
 ---
 
 ```julia
-dlegendre!(dP::AbstractMatrix, ϕ::Number, P::AbstractMatrix, n_max::Integer = -1, m_max::Integer = -1; kwargs...) -> Nothing
+dlegendre!(N, dP::AbstractMatrix, ϕ::Number, P::AbstractMatrix, n_max::Integer = -1, m_max::Integer = -1; kwargs...) -> Nothing
 ```
 
 Compute the first-order derivative of the associated Legendre function
@@ -230,7 +230,7 @@ This algorithm needs the matrix `P` with the values of the associated Legendre f
 using the same normalization `N`, which can be computed using the function `legendre`.
 
 > **Warning**
-> The user is responsible to pass a matrix `P` with the correct values. For example, if
+> The user is responsible for passing a matrix `P` with the correct values. For example, if
 > `ph_term` is `true`, `P` must also be computed with `ph_term` set to `true`.
 
 This function has the following keywords:

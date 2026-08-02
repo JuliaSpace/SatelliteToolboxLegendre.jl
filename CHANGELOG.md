@@ -1,7 +1,7 @@
 SatelliteToolboxLegendre.jl Changelog
 =====================================
 
-Verison 1.1.3
+Version 1.1.3
 -------------
 
 - ![Enhancement][badge-enhancement] Fix allocation in Julia v1.12. ([#2][gh-pr-2])
