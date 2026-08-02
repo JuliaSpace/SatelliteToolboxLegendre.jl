@@ -85,3 +85,38 @@ end
         @test_throws ArgumentError dlegendre!(dP, 0.123, P, coefs)
     end
 end
+
+@testset "Show" begin
+    coefs = LegendreCoefficients(Val(:full), 3, 2)
+
+    expected = "LegendreCoefficients{:full, Float64}: n_max = 3, m_max = 2"
+    @test sprint(show, coefs) == expected
+
+    expected = """
+        LegendreCoefficients{:full, Float64}:
+           Normalization : Fully normalized
+          Maximum degree : 3
+           Maximum order : 2"""
+    @test sprint(show, MIME("text/plain"), coefs) == expected
+
+    coefs = LegendreCoefficients(Val(:schmidt), 3; T = Float32)
+
+    expected = "LegendreCoefficients{:schmidt, Float32}: n_max = 3, m_max = 3"
+    @test sprint(show, coefs) == expected
+
+    expected = """
+        LegendreCoefficients{:schmidt, Float32}:
+           Normalization : Schmidt quasi-normalized
+          Maximum degree : 3
+           Maximum order : 3"""
+    @test sprint(show, MIME("text/plain"), coefs) == expected
+
+    coefs = LegendreCoefficients(Val(:unnormalized), 3)
+
+    expected = """
+        LegendreCoefficients{:unnormalized, Float64}:
+           Normalization : Unnormalized
+          Maximum degree : 3
+           Maximum order : 3"""
+    @test sprint(show, MIME("text/plain"), coefs) == expected
+end
