@@ -98,36 +98,17 @@ where `P̂_n,m` is the Schmidt quasi-normalized Legendre associated function.
     and Schmidt quasi-normalization. Geophysical Journal International, 160(2), pp. 487-504.
 """
 function legendre!(
-    ::Val{:full},
-    P::AbstractMatrix,
+    N::Union{Val{:full}, Val{:schmidt}, Val{:unnormalized}},
+    P::AbstractMatrix{T},
     ϕ::Number,
     n_max::Integer = -1,
     m_max::Integer = -1;
     ph_term::Bool = false
-)
-    return fully_normalized_legendre!(P, ϕ, n_max, m_max; ph_term = ph_term)
-end
+) where T<:Number
+    # Obtain the maximum degree and order that must be computed.
+    n_max, m_max = _get_degree_and_order(P, n_max, m_max)
 
-function legendre!(
-    ::Val{:schmidt},
-    P::AbstractMatrix,
-    ϕ::Number,
-    n_max::Integer = -1,
-    m_max::Integer = -1;
-    ph_term::Bool = false
-)
-    return schmidt_quasi_normalized_legendre!(P, ϕ, n_max, m_max; ph_term = ph_term)
-end
-
-function legendre!(
-    ::Val{:unnormalized},
-    P::AbstractMatrix,
-    ϕ::Number,
-    n_max::Integer = -1,
-    m_max::Integer = -1;
-    ph_term::Bool = false
-)
-    return unnormalized_legendre!(P, ϕ, n_max, m_max; ph_term = ph_term)
+    return _legendre_kernel!(P, ϕ, N, n_max, m_max, ph_term, T)
 end
 
 """
@@ -199,33 +180,22 @@ where `P̂_n,m` is the Schmidt quasi-normalized Legendre associated function.
     and Schmidt quasi-normalization. Geophysical Journal International, 160(2), pp. 487-504.
 """
 function legendre(
-    ::Val{:full},
-    ϕ::Number,
+    N::Union{Val{:full}, Val{:schmidt}, Val{:unnormalized}},
+    ϕ::T,
     n_max::Integer,
     m_max::Integer = -1;
     ph_term::Bool = false
-)
-    return fully_normalized_legendre(ϕ, n_max, m_max; ph_term = ph_term)
-end
+) where T<:Number
+    n_max < 0 && throw(ArgumentError("n_max must not be negative."))
 
-function legendre(
-    ::Val{:schmidt},
-    ϕ::Number,
-    n_max::Integer,
-    m_max::Integer = -1;
-    ph_term::Bool = false
-)
-    return schmidt_quasi_normalized_legendre(ϕ, n_max, m_max; ph_term = ph_term)
-end
+    if (m_max < 0) || (m_max > n_max)
+        m_max = n_max
+    end
 
-function legendre(
-    ::Val{:unnormalized},
-    ϕ::Number,
-    n_max::Integer,
-    m_max::Integer = -1;
-    ph_term::Bool = false
-)
-    return unnormalized_legendre(ϕ, n_max, m_max; ph_term = ph_term)
+    P = zeros(float(T), n_max + 1, m_max + 1)
+    legendre!(N, P, ϕ; ph_term = ph_term)
+
+    return P
 end
 
 """
