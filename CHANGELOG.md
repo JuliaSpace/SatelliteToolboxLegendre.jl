@@ -1,6 +1,32 @@
 SatelliteToolboxLegendre.jl Changelog
 =====================================
 
+Version 1.2.0
+-------------
+
+- ![Feature][badge-feature] Add the structure `LegendreCoefficients`, which stores
+  precomputed recursion coefficients. The new methods `legendre!(coefs, P, ϕ, ...)` and
+  `dlegendre!(coefs, dP, ϕ, P, ...)` use it to avoid evaluating square roots at every
+  call, largely improving the performance when the functions are evaluated at many angles
+  with the same maximum degree and order.
+- ![Enhancement][badge-enhancement] Remove type instabilities when the configuration
+  integers are not `Int` and when the element types of `dP` and `P` differ in the
+  derivative computation.
+- ![Enhancement][badge-enhancement] Improve the accuracy of the recursion coefficients of
+  the fully normalized associated Legendre function at very high degrees.
+- ![Enhancement][badge-enhancement] The sign adjustment applied to the derivative when
+  `ϕ ∈ (π, 2π)` was numerically verified against finite differences for the entire circle,
+  and the new tests cover this behavior.
+- ![Bugfix][badge-bugfix] The derivative kernels wrote the result using the first indices
+  of the matrix `P` instead of those of the matrix `dP`. Hence, the result was stored in
+  the wrong cells if matrices with offset axes and different origins were used.
+- ![Bugfix][badge-bugfix] `dlegendre!` now throws an `ArgumentError` if the matrix `P`
+  does not have the dimensions required by the selected maximum degree and order. Before,
+  the algorithm silently read memory outside the matrix bounds in this case, leading to
+  wrong results.
+- ![Info][badge-info] Many documentation errors were fixed in the docstrings and in the
+  README.md file.
+
 Version 1.1.3
 -------------
 
@@ -53,11 +79,11 @@ Version 0.1.0
 - Initial version.
   - This version was based on the code in **SatelliteToolbox.jl**.
 
-[badge-breaking]: https://img.shields.io/badge/BREAKING-red.svg
-[badge-deprecation]: https://img.shields.io/badge/Deprecation-orange.svg
-[badge-feature]: https://img.shields.io/badge/Feature-green.svg
-[badge-enhancement]: https://img.shields.io/badge/Enhancement-blue.svg
-[badge-bugfix]: https://img.shields.io/badge/Bugfix-purple.svg
-[badge-info]: https://img.shields.io/badge/Info-gray.svg
+[badge-breaking]: https://img.shields.io/badge/Breaking-DC2626?style=flat-square
+[badge-deprecation]: https://img.shields.io/badge/Deprecation-D97706?style=flat-square
+[badge-feature]: https://img.shields.io/badge/Feature-16A34A?style=flat-square
+[badge-enhancement]: https://img.shields.io/badge/Enhancement-0284C7?style=flat-square
+[badge-bugfix]: https://img.shields.io/badge/Bugfix-DB2777?style=flat-square
+[badge-info]: https://img.shields.io/badge/Info-475569?style=flat-square
 
 [gh-pr-2]: https://github.com/JuliaSpace/SatelliteToolboxLegendre.jl/pull/2
