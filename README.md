@@ -238,6 +238,56 @@ This function has the following keywords:
 - `ph_term::Bool`: If `true`, the Condon-Shortley phase term $(-1)^m$ will be included.
     (**Default** = `false`)
 
+### Precomputed Coefficients
+
+The recursion coefficients used to compute the Legendre associated functions and their
+derivatives depend only on the degree, order, and normalization. Hence, when the functions
+are evaluated at many angles with the same maximum degree and order, we can precompute the
+coefficients using the structure `LegendreCoefficients`, avoiding the evaluation of square
+roots at every call:
+
+```julia
+LegendreCoefficients(N, n_max::Integer, m_max::Integer = -1; T::Type{<:AbstractFloat} = Float64)
+```
+
+The parameter `N` selects the normalization, as in `legendre` and `dlegendre`, and the
+keyword `T` selects the element type used in the computations. The returned object can be
+passed to the in-place functions:
+
+```julia
+legendre!(P::AbstractMatrix, ϕ::Number, coefs::LegendreCoefficients, n_max::Integer = -1, m_max::Integer = -1; kwargs...) -> Nothing
+dlegendre!(dP::AbstractMatrix, ϕ::Number, P::AbstractMatrix, coefs::LegendreCoefficients, n_max::Integer = -1, m_max::Integer = -1; kwargs...) -> Nothing
+```
+
+These methods produce the same values as the ones that select the normalization using `N`,
+and throw an `ArgumentError` if the requested degree or order exceeds the ones supported by
+the coefficients.
+
+```julia
+julia> coefs = LegendreCoefficients(Val(:full), 60);
+
+julia> P = zeros(61, 61);
+
+julia> legendre!(P, 0.123, coefs)
+
+julia> dP = zeros(61, 61);
+
+julia> dlegendre!(dP, 0.123, P, coefs)
+```
+
+The table below shows the time per call obtained when computing the fully normalized
+functions with `n_max = m_max` using `Float64` (Julia 1.12.6, Apple M2 Pro). Neither
+version allocates memory after the first call:
+
+| Function     | `n_max` | Computing the coefficients | Using `LegendreCoefficients` |    Gain |
+|:-------------|--------:|---------------------------:|-----------------------------:|--------:|
+| `legendre!`  |      10 |                   0.132 µs |                     0.065 µs |  2.03 x |
+| `legendre!`  |      60 |                   3.924 µs |                     1.865 µs |  2.10 x |
+| `legendre!`  |     360 |                 137.228 µs |                    60.868 µs |  2.25 x |
+| `dlegendre!` |      10 |                   0.097 µs |                     0.062 µs |  1.56 x |
+| `dlegendre!` |      60 |                   3.116 µs |                     1.737 µs |  1.79 x |
+| `dlegendre!` |     360 |                 108.809 µs |                    60.055 µs |  1.81 x |
+
 ## Normalizations
 
 ### Full normalization
