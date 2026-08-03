@@ -43,7 +43,5 @@ end
 Return the human-readable name of the normalization related to the value `N`.
 """
 _normalization_name(::Val{:full}) = "Fully normalized"
-
 _normalization_name(::Val{:schmidt}) = "Schmidt quasi-normalized"
-
 _normalization_name(::Val{:unnormalized}) = "Unnormalized"

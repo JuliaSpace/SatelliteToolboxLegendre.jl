@@ -48,14 +48,19 @@ function _get_degree_and_order(P::AbstractMatrix, n_max::Integer, m_max::Integer
 end
 
 """
-    _get_degree_and_order(dP::AbstractMatrix, P::AbstractMatrix, n_max::Integer, m_max::Integer) -> Int, Int
+    _get_degree_and_order(
+        dP::AbstractMatrix,
+        P::AbstractMatrix,
+        n_max::Integer,
+        m_max::Integer
+    ) -> Int, Int
 
 Return the maximum degree and order to compute the derivative of the associated Legendre
-functions given the matrices `dP` and `P`, and the configuration values `n_max` and
-`m_max`. If `n_max` or `m_max` are negative, the dimensions of `dP` are used. The returned
-values are clamped so the computation always fits the matrix `dP`. This function throws an
-`ArgumentError` if `P` does not have the dimensions required to compute the derivative
-with the resulting degree and order.
+functions given the matrices `dP` and `P`, and the configuration values `n_max` and `m_max`.
+If `n_max` or `m_max` are negative, the dimensions of `dP` are used. The returned values are
+clamped so the computation always fits the matrix `dP`. This function throws an
+`ArgumentError` if `P` does not have the dimensions required to compute the derivative with
+the resulting degree and order.
 
 # Returns
 
@@ -76,9 +81,9 @@ function _get_degree_and_order(
     if (P_rows < n_max + 1) || (P_cols < req_cols)
         throw(
             ArgumentError(
-                "The matrix `P` must have at least $(n_max + 1) rows and $req_cols columns " *
-                "to compute the derivative with degree $n_max and order $m_max, but it has " *
-                "$P_rows rows and $P_cols columns.",
+                "The matrix `P` must have at least $(n_max + 1) rows and $req_cols " *
+                "columns to compute the derivative with degree $n_max and order $m_max, " *
+                "but it has $P_rows rows and $P_cols columns."
             ),
         )
     end
@@ -100,6 +105,7 @@ of the coefficient set, clamped at the maximum order `m_max`.
     (n <= m_max) && return (n * (n + 1)) >> 1 + m + 1
 
     q = m_max + 1
+
     return (q * (q + 1)) >> 1 + (n - q) * q + m + 1
 end
 
@@ -111,6 +117,7 @@ degree `n_max` and the maximum order `m_max` per degree (see `_packed_index`).
 """
 @inline function _packed_length(n_max::Int, m_max::Int)
     q = min(m_max, n_max) + 1
+
     return (q * (q + 1)) >> 1 + (n_max + 1 - q) * q
 end
 
@@ -123,5 +130,6 @@ to zero.
 function _zeros_storage(::Type{T}, len::Int) where T
     storage = PackedStorage{T}(undef, len)
     fill!(storage, zero(T))
+
     return storage
 end

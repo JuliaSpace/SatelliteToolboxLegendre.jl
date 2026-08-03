@@ -16,7 +16,15 @@
 export dlegendre!, dlegendre
 
 """
-    dlegendre!(N, dP::AbstractMatrix, ϕ::Number, P::AbstractMatrix, n_max::Integer = -1, m_max::Integer = -1; kwargs...) -> Nothing
+    dlegendre!(
+        N::Val,
+        dP::AbstractMatrix,
+        ϕ::Number,
+        P::AbstractMatrix,
+        n_max::Integer = -1,
+        m_max::Integer = -1;
+        kwargs...
+    ) -> Nothing
 
 Compute the first-order derivative of the associated Legendre function `P_n,m[cos(ϕ)]` with
 respect to `ϕ` [rad]:
@@ -78,7 +86,13 @@ function dlegendre!(
 end
 
 """
-    dlegendre(N, ϕ::T, n_max::Integer, m_max::Integer = -1; kwargs...) where T<:Number -> Matrix{float(T)}, Matrix{float(T)}
+    dlegendre(
+        N::Val,
+        ϕ::T,
+        n_max::Integer,
+        m_max::Integer = -1;
+        kwargs...
+    ) where T<:Number -> Matrix{float(T)}, Matrix{float(T)}
 
 Compute the first-order derivative of the associated Legendre function `P_n,m[cos(ϕ)]` with
 respect to `ϕ` [rad]:
@@ -140,7 +154,15 @@ function dlegendre(
 end
 
 """
-    dlegendre!(dP::AbstractMatrix, ϕ::Number, P::AbstractMatrix, coefs::LegendreCoefficients{N, T}, n_max::Integer = -1, m_max::Integer = -1; kwargs...) where {N, T<:AbstractFloat} -> Nothing
+    dlegendre!(
+        dP::AbstractMatrix,
+        ϕ::Number,
+        P::AbstractMatrix,
+        coefs::LegendreCoefficients{N, T},
+        n_max::Integer = -1,
+        m_max::Integer = -1;
+        kwargs...
+    ) where {N, T<:AbstractFloat} -> Nothing
 
 Compute the first-order derivative of the associated Legendre function `P_n,m[cos(ϕ)]`
 with respect to `ϕ` [rad] using the precomputed coefficients `coefs`, which also select the
@@ -191,7 +213,8 @@ function dlegendre!(
         throw(
             ArgumentError(
                 "The coefficients support the maximum degree $(coefs.n_max) and order " *
-                "$(coefs.m_max), but the computation requires degree $n_max and order $m_max.",
+                "$(coefs.m_max), but the computation requires degree $n_max and order " *
+                "$m_max.",
             ),
         )
     end

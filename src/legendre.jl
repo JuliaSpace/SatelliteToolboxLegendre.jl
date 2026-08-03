@@ -23,7 +23,14 @@
 export legendre!, legendre
 
 """
-    legendre!(N, P::AbstractMatrix, ϕ::Number, n_max::Integer = -1, m_max::Integer = -1; kwargs...) -> Nothing
+    legendre!(
+        N::Val,
+        P::AbstractMatrix,
+        ϕ::Number,
+        n_max::Integer = -1,
+        m_max::Integer = -1;
+        kwargs...
+    ) -> Nothing
 
 Compute the associated Legendre function `P_n,m[cos(ϕ)]`. The maximum degree and order that
 will be computed are given by the parameters `n_max` and `m_max`. If they are negative
@@ -51,18 +58,18 @@ The parameter `N` selects the normalization. The following values are valid:
 - `ph_term::Bool`: If `true`, the Condon-Shortley phase term `(-1)^m` will be included.
     (**Default** = `false`)
 
-# Remarks
+# Extended help
 
 ## Full normalization
 
 This algorithm was based on **[1]**. Our definition of fully normalized associated Legendre
 function can be seen in **[2, p. 546]**. The conversion is obtained by:
 
-             ┌                       ┐
-             │  (n-m)! . k . (2n+1)  │
-    K_n,m = √│ ───────────────────── │,  k = (m = 0) ? 1 : 2.
-             │         (n+m)!        │
-             └                       ┘
+             ┌                           ┐
+             │  (n - m)! . k . (2n + 1)  │
+    K_n,m = √│ ───────────────────────── │,  k = (m = 0) ? 1 : 2.
+             │          (n + m)!         │
+             └                           ┘
 
     P̄_n,m = P_n,m * K_n,m,
 
@@ -72,11 +79,11 @@ where `P̄_n,m` is the fully normalized Legendre associated function.
 
 This algorithm was based on **[3, 4]**. The conversion is obtained by:
 
-             ┌              ┐
-             │      (n-m)!  │
-    K_n,m = √│ k . ──────── │,  k = (m = 0) ? 1 : 2.
-             │      (n+m)!  │
-             └              ┘
+             ┌                ┐
+             │      (n - m)!  │
+    K_n,m = √│ k . ────────── │,  k = (m = 0) ? 1 : 2.
+             │      (n + m)!  │
+             └                ┘
 
     P̂_n,m = P_n,m * K_n,m,
 
@@ -112,7 +119,13 @@ function legendre!(
 end
 
 """
-    legendre(N, ϕ::T, n_max::Integer, m_max::Integer = -1; ph_term::Bool = false) where T<:Number -> Matrix{float(T)}
+    legendre(
+        N::Val,
+        ϕ::T,
+        n_max::Integer,
+        m_max::Integer = -1;
+        ph_term::Bool = false
+    ) where T<:Number -> Matrix{float(T)}
 
 Compute the associated Legendre function `P_n,m[cos(ϕ)]`. The maximum degree that will be
 computed is `n_max` and the maximum order is `m_max`. Notice that if `m_max` is higher than
@@ -133,18 +146,18 @@ The parameter `N` selects the normalization. The following values are valid:
 
 - `Matrix{float(T)}`: A matrix with the Legendre associated functions `P_n,m[cos(ϕ)]`.
 
-# Remarks
+# Extended help
 
 ## Full normalization
 
 This algorithm was based on **[1]**. Our definition of fully normalized associated Legendre
 function can be seen in **[2, p. 546]**. The conversion is obtained by:
 
-             ┌                       ┐
-             │  (n-m)! . k . (2n+1)  │
-    K_n,m = √│ ───────────────────── │,  k = (m = 0) ? 1 : 2.
-             │         (n+m)!        │
-             └                       ┘
+             ┌                           ┐
+             │  (n - m)! . k . (2n + 1)  │
+    K_n,m = √│ ───────────────────────── │,  k = (m = 0) ? 1 : 2.
+             │          (n + m)!         │
+             └                           ┘
 
     P̄_n,m = P_n,m * K_n,m,
 
@@ -154,11 +167,11 @@ where `P̄_n,m` is the fully normalized Legendre associated function.
 
 This algorithm was based on **[3, 4]**. The conversion is obtained by:
 
-             ┌              ┐
-             │      (n-m)!  │
-    K_n,m = √│ k . ──────── │,  k = (m = 0) ? 1 : 2.
-             │      (n+m)!  │
-             └              ┘
+             ┌                ┐
+             │      (n - m)!  │
+    K_n,m = √│ k . ────────── │,  k = (m = 0) ? 1 : 2.
+             │      (n + m)!  │
+             └                ┘
 
     P̂_n,m = P_n,m * K_n,m,
 
@@ -199,7 +212,14 @@ function legendre(
 end
 
 """
-    legendre!(P::AbstractMatrix, ϕ::Number, coefs::LegendreCoefficients{N, T}, n_max::Integer = -1, m_max::Integer = -1; kwargs...) where {N, T<:AbstractFloat} -> Nothing
+    legendre!(
+        P::AbstractMatrix,
+        ϕ::Number,
+        coefs::LegendreCoefficients{N, T},
+        n_max::Integer = -1,
+        m_max::Integer = -1;
+        kwargs...
+    ) where {N, T<:AbstractFloat} -> Nothing
 
 Compute the associated Legendre function `P_n,m[cos(ϕ)]` using the precomputed coefficients
 `coefs`, which also select the normalization (see [`LegendreCoefficients`](@ref)). The

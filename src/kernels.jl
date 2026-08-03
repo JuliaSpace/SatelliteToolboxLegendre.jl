@@ -284,7 +284,7 @@ end
 # == Seed ==================================================================================
 
 """
-    _kernel_seed(coefs, ::Type{T}) where T<:Number -> T
+    _kernel_seed(coefs::Union{Val, LegendreCoefficients}, ::Type{T}) where T<:Number -> T
 
 Return the coefficient of the terms with degree 1 of the associated Legendre function
 recursion using the type `T`. If `coefs` is a `Val` selecting the normalization, the
@@ -299,7 +299,11 @@ precomputed value is returned.
 # == Legendre Function Coefficients ========================================================
 
 """
-    _kernel_legendre_aux(coefs, ::Type{T}, n::Int) where T<:Number -> Union{Nothing, T, Tuple}
+    _kernel_legendre_aux(
+        coefs::Union{Val, LegendreCoefficients},
+        ::Type{T},
+        n::Int
+    ) where T<:Number -> Union{Nothing, T, Tuple{T, T}}
 
 Return the auxiliary terms of the associated Legendre function recursion that depend only
 on the degree `n`, computed using the type `T`. The returned value is consumed only by the
@@ -314,6 +318,7 @@ is required.
     # loop. Using ratios of already-rooted factors avoids products that can overflow or
     # lose precision at very high degrees.
     sq_2n_p_1 = √T(2n + 1)
+
     return (
         √T(2n - 1) * sq_2n_p_1,  # .................................. √((2n - 1) * (2n + 1))
         sq_2n_p_1 / √T(2n - 3),  # .................................. √((2n + 1) / (2n - 3))
@@ -321,13 +326,15 @@ is required.
 end
 
 @inline _kernel_legendre_aux(::Val{:schmidt}, ::Type{T}, n::Int) where {T} = T(2n - 1)
-
 @inline _kernel_legendre_aux(::Val{:unnormalized}, ::Type{T}, n::Int) where {T} = T(2n - 1)
-
 @inline _kernel_legendre_aux(::LegendreCoefficients, ::Type{T}, n::Int) where {T} = nothing
 
 """
-    _kernel_legendre_diag(coefs, ::Type{T}, n::Int) where T<:Number -> T
+    _kernel_legendre_diag(
+        coefs::Union{Val, LegendreCoefficients},
+        ::Type{T},
+        n::Int
+    ) where T<:Number -> T
 
 Return the coefficient of the diagonal recursion (`n == m`) of the associated Legendre
 function for the degree `n` using the type `T`. If `coefs` is a `Val` selecting the
@@ -351,7 +358,13 @@ end
 end
 
 """
-    _kernel_legendre_ab(coefs, aux, ::Type{T}, n::Int, m::Int) where T<:Number -> T, T
+    _kernel_legendre_ab(
+        coefs::Union{Val, LegendreCoefficients},
+        aux::Union{Nothing, T, Tuple{T, T}},
+        ::Type{T},
+        n::Int,
+        m::Int
+    ) where T<:Number -> T, T
 
 Return the coefficients `a_nm` and `b_nm` of the associated Legendre function recursion
 for the degree `n` and order `m` using the type `T`, where `aux` contains the auxiliary
@@ -359,42 +372,53 @@ terms obtained from [`_kernel_legendre_aux`](@ref). If `coefs` is a `Val` select
 normalization, the coefficients are computed on the fly. If it is a
 [`LegendreCoefficients`](@ref) object, the precomputed values are returned.
 """
-@inline function _kernel_legendre_ab(::Val{:full}, aux, ::Type{T}, n::Int, m::Int) where {T}
+@inline function _kernel_legendre_ab(
+    ::Val{:full}, aux::Tuple{T, T}, ::Type{T}, n::Int, m::Int
+) where {T}
     aux_nm = √(T(n - m) * T(n + m))
-    a_nm   = aux[1] / aux_nm
-    b_nm   = √(T(n + m - 1) * T(n - m - 1)) * aux[2] / aux_nm
+    a_nm   = first(aux) / aux_nm
+    b_nm   = √(T(n + m - 1) * T(n - m - 1)) * last(aux) / aux_nm
+
     return a_nm, b_nm
 end
 
 @inline function _kernel_legendre_ab(
-    ::Val{:schmidt}, aux, ::Type{T}, n::Int, m::Int
+    ::Val{:schmidt}, aux::T, ::Type{T}, n::Int, m::Int
 ) where {T}
     aux_nm = √(T(n - m) * T(n + m))
     a_nm   = aux / aux_nm
     b_nm   = √(T(n + m - 1) * T(n - m - 1)) / aux_nm
+
     return a_nm, b_nm
 end
 
 @inline function _kernel_legendre_ab(
-    ::Val{:unnormalized}, aux, ::Type{T}, n::Int, m::Int
+    ::Val{:unnormalized}, aux::T, ::Type{T}, n::Int, m::Int
 ) where {T}
-    aux_nm = T(n - m)              # .......................... √((n - m) * (n - m))
+    aux_nm = T(n - m)
     a_nm   = aux / aux_nm
-    b_nm   = T(n + m - 1) / aux_nm # ......... √((n + m - 1) * (n + m - 1)) / aux_nm
+    b_nm   = T(n + m - 1) / aux_nm
+
     return a_nm, b_nm
 end
 
 @inline function _kernel_legendre_ab(
-    coefs::LegendreCoefficients, aux, ::Type{T}, n::Int, m::Int
+    coefs::LegendreCoefficients, ::Nothing, ::Type{T}, n::Int, m::Int
 ) where {T}
     i = _packed_index(n, m, coefs.m_max_P)
+
     return @inbounds coefs.a[i], coefs.b[i]
 end
 
 # == Derivative Coefficients ===============================================================
 
 """
-    _kernel_dlegendre_a(coefs, ::Type{T}, n::Int, m::Int) where T<:Number -> T
+    _kernel_dlegendre_a(
+        coefs::Union{Val, LegendreCoefficients},
+        ::Type{T},
+        n::Int,
+        m::Int
+    ) where T<:Number -> T
 
 Return the coefficient `a_nm` of the derivative equation for the degree `n` and order `m`
 using the type `T`. If `coefs` is a `Val` selecting the normalization, the coefficient is
@@ -449,7 +473,12 @@ end
 end
 
 """
-    _kernel_dlegendre_b(coefs, ::Type{T}, n::Int, m::Int) where T<:Number -> T
+    _kernel_dlegendre_b(
+        coefs::Union{Val, LegendreCoefficients},
+        ::Type{T},
+        n::Int,
+        m::Int
+    ) where T<:Number -> T
 
 Return the coefficient `b_nm` of the derivative equation for the degree `n` and order `m`
 using the type `T`. If `coefs` is a `Val` selecting the normalization, the coefficient is

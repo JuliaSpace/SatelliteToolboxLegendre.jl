@@ -1,7 +1,7 @@
 ## Description #############################################################################
 #
 # Precomputed coefficients to accelerate the computation of the associated Legendre
-#   functions and their first-order derivatives.
+# functions and their first-order derivatives.
 #
 ############################################################################################
 
@@ -10,7 +10,12 @@
 ############################################################################################
 
 """
-    LegendreCoefficients(N, n_max::Integer, m_max::Integer = -1; T::Type{<:AbstractFloat} = Float64) -> LegendreCoefficients
+    LegendreCoefficients(
+        N,
+        n_max::Integer,
+        m_max::Integer = -1;
+        T::Type{<:AbstractFloat} = Float64
+    ) -> LegendreCoefficients
 
 Create the precomputed coefficients to compute the associated Legendre function
 `P_n,m[cos(ϕ)]` and its first-order derivative with respect to `ϕ` up to the maximum degree
@@ -30,7 +35,9 @@ compute the functions without evaluating square roots at every call.
 
 - `T::Type{<:AbstractFloat}`: Element type of the coefficients. (**Default** = `Float64`)
 
-# Examples
+# Extended help
+
+## Examples
 
 ```julia-repl
 julia> coefs = LegendreCoefficients(Val(:full), 60);
@@ -91,13 +98,18 @@ end
 Return the symbol of the normalization related to the value `N`.
 """
 _normalization(::Val{:full}) = :full
-
 _normalization(::Val{:schmidt}) = :schmidt
-
 _normalization(::Val{:unnormalized}) = :unnormalized
 
 """
-    _fill_legendre_coefficients!(N::Val, diag::PackedStorage{T}, a::PackedStorage{T}, b::PackedStorage{T}, n_max::Integer, m_max::Integer) where T<:AbstractFloat -> Nothing
+    _fill_legendre_coefficients!(
+        N::Val,
+        diag::PackedStorage{T},
+        a::PackedStorage{T},
+        b::PackedStorage{T},
+        n_max::Integer,
+        m_max::Integer
+    ) where T<:AbstractFloat -> Nothing
 
 Fill the packed storages `diag`, `a`, and `b` with the coefficients used to compute the
 associated Legendre function with the normalization `N` up to the degree `n_max` and order
@@ -127,7 +139,13 @@ function _fill_legendre_coefficients!(
 end
 
 """
-    _fill_dlegendre_coefficients!(N::Val, da::PackedStorage{T}, db::PackedStorage{T}, n_max::Integer, m_max::Integer) where T<:AbstractFloat -> Nothing
+    _fill_dlegendre_coefficients!(
+        N::Val,
+        da::PackedStorage{T},
+        db::PackedStorage{T},
+        n_max::Integer,
+        m_max::Integer
+    ) where T<:AbstractFloat -> Nothing
 
 Fill the packed storages `da` and `db` with the coefficients used to compute the
 first-order derivative of the associated Legendre function with the normalization `N` up
