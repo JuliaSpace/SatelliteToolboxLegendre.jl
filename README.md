@@ -285,12 +285,12 @@ version allocates memory after the first call:
 
 | Function     | `n_max` | Computing the coefficients | Using `LegendreCoefficients` |    Gain |
 |:-------------|--------:|---------------------------:|-----------------------------:|--------:|
-| `legendre!`  |      10 |                   0.138 µs |                     0.063 µs |  2.17 x |
-| `legendre!`  |      60 |                   3.894 µs |                     1.669 µs |  2.33 x |
-| `legendre!`  |     360 |                 135.282 µs |                    53.599 µs |  2.52 x |
-| `dlegendre!` |      10 |                   0.097 µs |                     0.059 µs |  1.65 x |
-| `dlegendre!` |      60 |                   3.072 µs |                     1.439 µs |  2.13 x |
-| `dlegendre!` |     360 |                 107.404 µs |                    49.492 µs |  2.17 x |
+| `legendre!`  |      10 |                   0.136 µs |                     0.063 µs |  2.14 x |
+| `legendre!`  |      60 |                   3.862 µs |                     1.710 µs |  2.26 x |
+| `legendre!`  |     360 |                 138.894 µs |                    54.877 µs |  2.53 x |
+| `dlegendre!` |      10 |                   0.097 µs |                     0.060 µs |  1.63 x |
+| `dlegendre!` |      60 |                   3.161 µs |                     1.489 µs |  2.12 x |
+| `dlegendre!` |     360 |                 109.599 µs |                    50.629 µs |  2.16 x |
 
 ## Normalizations
 
