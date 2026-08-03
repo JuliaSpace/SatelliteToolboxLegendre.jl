@@ -10,8 +10,9 @@
 #   2. A `LegendreCoefficients` object, leading to coefficients read from precomputed
 #      arrays.
 #
-# All the arithmetic operations are performed using the element type `T` passed to the
-# kernels.
+# All the arithmetic operations are performed using the promotion of the element type `T`
+# passed to the kernels with the type of the angle `ϕ`. Hence, automatic differentiation
+# types in `ϕ`, e.g. the dual numbers of ForwardDiff.jl, are propagated to the result.
 #
 ## References ##############################################################################
 #
@@ -55,7 +56,8 @@
 
 Compute the associated Legendre function `P_n,m[cos(ϕ)]` up to the degree `n_max` and
 order `m_max`, storing the result in the matrix `P`. All the arithmetic operations are
-performed using the type `T`.
+performed using the promotion of the type `T` with the type of `ϕ`, keeping automatic
+differentiation types in `ϕ` working.
 
 The argument `coefs` selects the coefficient provider. If it is a `Val` selecting the
 normalization (`Val(:full)`, `Val(:schmidt)`, or `Val(:unnormalized)`), the recursion
@@ -88,8 +90,13 @@ function _legendre_kernel!(
     ph_term::Bool,
     ::Type{T}
 ) where {T}
+    # Type used in the arithmetic operations that depend on the angle. Promoting it with
+    # the angle type keeps automatic differentiation working when `ϕ` carries additional
+    # information, e.g. the dual numbers of ForwardDiff.jl.
+    Tc = promote_type(T, typeof(ϕ))
+
     # Auxiliary variables to improve code performance.
-    s, c = sincos(T(ϕ))
+    s, c = sincos(Tc(ϕ))
 
     # The sine must be always positive. In fact, `s` was previously computed using
     # `√(1 - c^2)`. However, we had numerical problems for very small angles that lead to
@@ -125,13 +132,13 @@ function _legendre_kernel!(
         aux = _kernel_legendre_aux(coefs, T, n)
 
         for m in 0:n
-            P_nm = zero(T)
+            P_nm = zero(Tc)
 
             if n == m
                 P_nm =
                     s_fact *
                     _kernel_legendre_diag(coefs, T, n) *
-                    T(P[i₀ + n - 1, j₀ + n - 1])
+                    Tc(P[i₀ + n - 1, j₀ + n - 1])
 
             else
                 a_nm, b_nm = _kernel_legendre_ab(coefs, aux, T, n, m)
@@ -140,9 +147,10 @@ function _legendre_kernel!(
                 # We assume that the matrix is not initialized. Hence, we must not access
                 # elements on the upper triangle.
                 if m != n - 1
-                    P_nm = a_nm * T(P[i₀ + n - 1, j₀ + m]) - b_nm * T(P[i₀ + n - 2, j₀ + m])
+                    P_nm = a_nm * Tc(P[i₀ + n - 1, j₀ + m]) -
+                        b_nm * Tc(P[i₀ + n - 2, j₀ + m])
                 else
-                    P_nm = a_nm * T(P[i₀ + n - 1, j₀ + m])
+                    P_nm = a_nm * Tc(P[i₀ + n - 1, j₀ + m])
                 end
             end
 
@@ -176,7 +184,8 @@ Compute the first-order derivative of the associated Legendre function `P_n,m[co
 with respect to `ϕ` [rad] up to the degree `n_max` and order `m_max`, storing the result
 in the matrix `dP`. The matrix `P` must contain the values of the associated Legendre
 function with the same normalization. All the arithmetic operations are performed using
-the type `T`.
+the promotion of the type `T` with the type of `ϕ`, keeping automatic differentiation
+types in `ϕ` working.
 
 The argument `coefs` selects the coefficient provider. If it is a `Val` selecting the
 normalization (`Val(:full)`, `Val(:schmidt)`, or `Val(:unnormalized)`), the derivative
@@ -238,8 +247,13 @@ function _dlegendre_kernel!(
     # where the convention renders the computed function non-differentiable, this function
     # returns the one-sided derivative (from the right at 0 and 2π, and from the left at π).
 
-    ϕ    = mod(ϕ, T(2π))
-    fact = ϕ > T(π) ? -1 : 1
+    # Type used in the arithmetic operations that depend on the angle. Promoting it with
+    # the angle type keeps automatic differentiation working when `ϕ` carries additional
+    # information, e.g. the dual numbers of ForwardDiff.jl.
+    Tc = promote_type(T, typeof(ϕ))
+
+    ϕ    = mod(ϕ, Tc(2π))
+    fact = ϕ > Tc(π) ? -1 : 1
 
     if ph_term
         fact *= -1
@@ -255,15 +269,15 @@ function _dlegendre_kernel!(
 
     @inbounds for n in 1:n_max
         for m in 0:n
-            dP_nm = zero(T)
+            dP_nm = zero(Tc)
 
             if m == 0
-                dP_nm = -_kernel_dlegendre_a(coefs, T, n, 0) * T(P[i₀ + n, j₀ + 1])
+                dP_nm = -_kernel_dlegendre_a(coefs, T, n, 0) * Tc(P[i₀ + n, j₀ + 1])
             else
-                dP_nm = _kernel_dlegendre_a(coefs, T, n, m) * T(P[i₀ + n, j₀ + m - 1])
+                dP_nm = _kernel_dlegendre_a(coefs, T, n, m) * Tc(P[i₀ + n, j₀ + m - 1])
 
                 if n != m
-                    dP_nm -= _kernel_dlegendre_b(coefs, T, n, m) * T(P[i₀ + n, j₀ + m + 1])
+                    dP_nm -= _kernel_dlegendre_b(coefs, T, n, m) * Tc(P[i₀ + n, j₀ + m + 1])
                 end
             end
 

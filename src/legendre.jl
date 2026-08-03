@@ -229,7 +229,9 @@ function throws an `ArgumentError` if the maximum degree or order exceeds the on
 supported by `coefs`.
 
 The result will be stored in matrix `P` and all the arithmetic operations are performed
-using the element type `T` of the coefficients.
+using the promotion of the element type `T` of the coefficients with the type of `ϕ`.
+Hence, automatic differentiation types in `ϕ`, e.g. the dual numbers of ForwardDiff.jl,
+are propagated to the result.
 
 !!! note
 

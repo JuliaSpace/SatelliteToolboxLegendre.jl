@@ -172,7 +172,9 @@ be computed are given by the parameters `n_max` and `m_max`. If they are negativ
 `ArgumentError` if the maximum degree or order exceeds the ones supported by `coefs`.
 
 The derivatives will be stored in the matrix `dP` and all the arithmetic operations are
-performed using the element type `T` of the coefficients.
+performed using the promotion of the element type `T` of the coefficients with the type
+of `ϕ`. Hence, automatic differentiation types in `ϕ`, e.g. the dual numbers of
+ForwardDiff.jl, are propagated to the result.
 
 This algorithm needs the matrix `P` with the values of the associated Legendre function
 using the same normalization, which can be computed using [`legendre!`](@ref) with the same
