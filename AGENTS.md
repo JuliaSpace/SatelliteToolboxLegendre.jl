@@ -23,6 +23,7 @@
 - Wrap code and comments at 92 characters. If a function declaration does not fit in 92 characters, break it with one argument per line; otherwise keep it on a single line.
 - End every comment with a period. Use `;` to separate positional from keyword arguments in calls and definitions, and spaces around `=` in keyword arguments.
 - Every function and structure has a docstring, except methods extending an already documented function. Docstring signature lines follow the `name(args; kwargs...) -> ReturnType` convention used throughout `src/`.
+- Internal functions are prefixed with `_`, but types, structures, and type aliases never use the `_` prefix, even internal ones (e.g. `PackedStorage`).
 - Commit messages start with a gitmoji short code (e.g. `:bug:`, `:sparkles:`), use a capitalized imperative summary of at most 50 characters, and wrap the body at 72 characters.
 
 ## Behavioral Constraints
