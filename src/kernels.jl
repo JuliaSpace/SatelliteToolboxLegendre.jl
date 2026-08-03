@@ -1,7 +1,7 @@
 ## Description #############################################################################
 #
 # Generic kernels to compute the associated Legendre functions and their first-order
-#   derivatives.
+# derivatives.
 #
 # The kernels are parameterized by a coefficient provider `coefs`, which can be:
 #
@@ -43,7 +43,15 @@
 ############################################################################################
 
 """
-    _legendre_kernel!(P::AbstractMatrix, ϕ::Number, coefs, n_max::Int, m_max::Int, ph_term::Bool, ::Type{T}) where T<:Number -> Nothing
+    _legendre_kernel!(
+        P::AbstractMatrix,
+        ϕ::Number,
+        coefs::Union{Val, LegendreCoefficients},
+        n_max::Int,
+        m_max::Int,
+        ph_term::Bool,
+        ::Type{T}
+    ) where T<:Number -> Nothing
 
 Compute the associated Legendre function `P_n,m[cos(ϕ)]` up to the degree `n_max` and
 order `m_max`, storing the result in the matrix `P`. All the arithmetic operations are
@@ -72,7 +80,13 @@ the coefficients are read from the precomputed arrays.
 - `::Type{T}`: Type used for the arithmetic operations.
 """
 function _legendre_kernel!(
-    P::AbstractMatrix, ϕ::Number, coefs, n_max::Int, m_max::Int, ph_term::Bool, ::Type{T}
+    P::AbstractMatrix,
+    ϕ::Number,
+    coefs::Union{Val, LegendreCoefficients},
+    n_max::Int,
+    m_max::Int,
+    ph_term::Bool,
+    ::Type{T}
 ) where {T}
     # Auxiliary variables to improve code performance.
     s, c = sincos(T(ϕ))
@@ -147,7 +161,16 @@ end
 ############################################################################################
 
 """
-    _dlegendre_kernel!(dP::AbstractMatrix, ϕ::Number, P::AbstractMatrix, coefs, n_max::Int, m_max::Int, ph_term::Bool, ::Type{T}) where T<:Number -> Nothing
+    _dlegendre_kernel!(
+        dP::AbstractMatrix,
+        ϕ::Number,
+        P::AbstractMatrix,
+        coefs::Union{Val, LegendreCoefficients},
+        n_max::Int,
+        m_max::Int,
+        ph_term::Bool,
+        ::Type{T}
+    ) where T<:Number -> Nothing
 
 Compute the first-order derivative of the associated Legendre function `P_n,m[cos(ϕ)]`
 with respect to `ϕ` [rad] up to the degree `n_max` and order `m_max`, storing the result
@@ -204,17 +227,16 @@ function _dlegendre_kernel!(
     # Since both coefficients are equal in this case, the equation simplifies to a single
     # product.
     #
-    # NOTE: This algorithm is based on eq. Z.1.44 of [6], which is valid only for
-    # ϕ ∈ [0, π] (see [6, p. 119]). In this package, the Legendre associated functions are
-    # computed using the convention that `sin(ϕ)` is always positive. Under this
-    # convention, the computed function is even about ϕ = 0 and ϕ = π. Hence, for
-    # ϕ ∈ (π, 2π), the derivative equals the negative of the value obtained from the
-    # coefficients, which is applied here using the variable `fact`. This behavior was
-    # verified numerically against finite differences of the values returned by the
-    # corresponding Legendre function for the entire circle, including angles outside
-    # [0, 2π]. At the points ϕ ∈ {0, π, 2π}, where the convention renders the computed
-    # function non-differentiable, this function returns the one-sided derivative (from
-    # the right at 0 and 2π, and from the left at π).
+    # NOTE: This algorithm is based on eq. Z.1.44 of [6], which is valid only for ϕ ∈ [0, π]
+    # (see [6, p. 119]). In this package, the Legendre associated functions are computed
+    # using the convention that `sin(ϕ)` is always positive. Under this convention, the
+    # computed function is even about ϕ = 0 and ϕ = π. Hence, for ϕ ∈ (π, 2π), the
+    # derivative equals the negative of the value obtained from the coefficients, which is
+    # applied here using the variable `fact`. This behavior was verified numerically against
+    # finite differences of the values returned by the corresponding Legendre function for
+    # the entire circle, including angles outside [0, 2π]. At the points ϕ ∈ {0, π, 2π},
+    # where the convention renders the computed function non-differentiable, this function
+    # returns the one-sided derivative (from the right at 0 and 2π, and from the left at π).
 
     ϕ    = mod(ϕ, T(2π))
     fact = ϕ > T(π) ? -1 : 1
@@ -270,23 +292,22 @@ coefficient is computed on the fly. If it is a [`LegendreCoefficients`](@ref) ob
 precomputed value is returned.
 """
 @inline _kernel_seed(::Val{:full}, ::Type{T}) where {T} = √T(3)
-
 @inline _kernel_seed(::Val{:schmidt}, ::Type{T}) where {T} = one(T)
-
 @inline _kernel_seed(::Val{:unnormalized}, ::Type{T}) where {T} = one(T)
-
 @inline _kernel_seed(coefs::LegendreCoefficients, ::Type{T}) where {T} = coefs.seed
 
 # == Legendre Function Coefficients ========================================================
 
 """
-    _kernel_legendre_aux(coefs, ::Type{T}, n::Int) where T<:Number -> Union{Nothing, Tuple}
+    _kernel_legendre_aux(coefs, ::Type{T}, n::Int) where T<:Number -> Union{Nothing, T, Tuple}
 
 Return the auxiliary terms of the associated Legendre function recursion that depend only
-on the degree `n`, computed using the type `T`. If `coefs` is a `Val` selecting the
-normalization, the terms are computed on the fly and returned in a tuple. If it is a
-[`LegendreCoefficients`](@ref) object, no auxiliary term is required and the function
-returns `nothing`.
+on the degree `n`, computed using the type `T`. The returned value is consumed only by the
+[`_kernel_legendre_ab`](@ref) method of the same provider `coefs`. Hence, its type is a
+contract between each pair of methods: the full normalization returns a tuple with two
+terms, the Schmidt quasi-normalization and the unnormalized case return a single scalar,
+and the [`LegendreCoefficients`](@ref) provider returns `nothing` since no auxiliary term
+is required.
 """
 @inline function _kernel_legendre_aux(::Val{:full}, ::Type{T}, n::Int) where {T}
     # Compute the square roots of the terms that depend only on `n` outside the inner
@@ -299,11 +320,9 @@ returns `nothing`.
     )
 end
 
-@inline _kernel_legendre_aux(::Val{:schmidt}, ::Type{T}, n::Int) where {T} = (T(2n - 1),)
+@inline _kernel_legendre_aux(::Val{:schmidt}, ::Type{T}, n::Int) where {T} = T(2n - 1)
 
-@inline function _kernel_legendre_aux(::Val{:unnormalized}, ::Type{T}, n::Int) where {T}
-    return (T(2n - 1),)
-end
+@inline _kernel_legendre_aux(::Val{:unnormalized}, ::Type{T}, n::Int) where {T} = T(2n - 1)
 
 @inline _kernel_legendre_aux(::LegendreCoefficients, ::Type{T}, n::Int) where {T} = nothing
 
@@ -351,7 +370,7 @@ end
     ::Val{:schmidt}, aux, ::Type{T}, n::Int, m::Int
 ) where {T}
     aux_nm = √(T(n - m) * T(n + m))
-    a_nm   = aux[1] / aux_nm
+    a_nm   = aux / aux_nm
     b_nm   = √(T(n + m - 1) * T(n - m - 1)) / aux_nm
     return a_nm, b_nm
 end
@@ -360,7 +379,7 @@ end
     ::Val{:unnormalized}, aux, ::Type{T}, n::Int, m::Int
 ) where {T}
     aux_nm = T(n - m)              # .......................... √((n - m) * (n - m))
-    a_nm   = aux[1] / aux_nm
+    a_nm   = aux / aux_nm
     b_nm   = T(n + m - 1) / aux_nm # ......... √((n + m - 1) * (n + m - 1)) / aux_nm
     return a_nm, b_nm
 end
