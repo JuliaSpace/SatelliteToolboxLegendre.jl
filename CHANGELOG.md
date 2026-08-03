@@ -11,6 +11,12 @@ Version 1.2.0
   with the same maximum degree and order. The coefficients are stored in packed vectors
   containing only the lower triangular part of the coefficient set, halving the memory
   usage compared to dense matrices.
+- ![Feature][badge-feature] Add show methods for `LegendreCoefficients` using the standard
+  library StyledStrings.jl, which is now the only dependency of the package.
+- ![Feature][badge-feature] All the computation paths now support automatic
+  differentiation with respect to the angle, e.g. using the dual numbers of
+  ForwardDiff.jl. The angle-dependent arithmetic is performed using the promotion of the
+  coefficient element type with the angle type.
 - ![Enhancement][badge-enhancement] Remove type instabilities when the configuration
   integers are not `Int` and when the element types of `dP` and `P` differ in the
   derivative computation.
