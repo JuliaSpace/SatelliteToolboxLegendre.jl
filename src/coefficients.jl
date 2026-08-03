@@ -97,7 +97,7 @@ _normalization(::Val{:schmidt}) = :schmidt
 _normalization(::Val{:unnormalized}) = :unnormalized
 
 """
-    _fill_legendre_coefficients!(N::Val, diag::_PackedStorage{T}, a::_PackedStorage{T}, b::_PackedStorage{T}, n_max::Integer, m_max::Integer) where T<:AbstractFloat -> Nothing
+    _fill_legendre_coefficients!(N::Val, diag::PackedStorage{T}, a::PackedStorage{T}, b::PackedStorage{T}, n_max::Integer, m_max::Integer) where T<:AbstractFloat -> Nothing
 
 Fill the packed storages `diag`, `a`, and `b` with the coefficients used to compute the
 associated Legendre function with the normalization `N` up to the degree `n_max` and order
@@ -106,9 +106,9 @@ associated Legendre function with the normalization `N` up to the degree `n_max`
 """
 function _fill_legendre_coefficients!(
     N::Union{Val{:full}, Val{:schmidt}, Val{:unnormalized}},
-    diag::_PackedStorage{T},
-    a::_PackedStorage{T},
-    b::_PackedStorage{T},
+    diag::PackedStorage{T},
+    a::PackedStorage{T},
+    b::PackedStorage{T},
     n_max::Integer,
     m_max::Integer,
 ) where {T <: AbstractFloat}
@@ -127,7 +127,7 @@ function _fill_legendre_coefficients!(
 end
 
 """
-    _fill_dlegendre_coefficients!(N::Val, da::_PackedStorage{T}, db::_PackedStorage{T}, n_max::Integer, m_max::Integer) where T<:AbstractFloat -> Nothing
+    _fill_dlegendre_coefficients!(N::Val, da::PackedStorage{T}, db::PackedStorage{T}, n_max::Integer, m_max::Integer) where T<:AbstractFloat -> Nothing
 
 Fill the packed storages `da` and `db` with the coefficients used to compute the
 first-order derivative of the associated Legendre function with the normalization `N` up
@@ -137,8 +137,8 @@ fly by the kernel in `src/kernels.jl`, and `da` and `db` are laid out as describ
 """
 function _fill_dlegendre_coefficients!(
     N::Union{Val{:full}, Val{:schmidt}, Val{:unnormalized}},
-    da::_PackedStorage{T},
-    db::_PackedStorage{T},
+    da::PackedStorage{T},
+    db::PackedStorage{T},
     n_max::Integer,
     m_max::Integer,
 ) where {T <: AbstractFloat}

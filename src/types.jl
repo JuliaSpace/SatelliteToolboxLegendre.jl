@@ -9,9 +9,9 @@ export LegendreCoefficients
 # Container used to store the packed coefficients. In Julia versions 1.11 and above, we use
 # `Memory` for better performance. In earlier versions, we use a standard `Vector`.
 @static if VERSION >= v"1.11-"
-    const _PackedStorage{T} = Memory{T}
+    const PackedStorage{T} = Memory{T}
 else
-    const _PackedStorage{T} = Vector{T}
+    const PackedStorage{T} = Vector{T}
 end
 
 """
@@ -39,15 +39,15 @@ accessed directly.
     order higher than `m_max` (clamped to `n_max`) so the matrix `P` required by
     [`dlegendre!`](@ref) can be computed with the same object.
 - `seed::T`: Coefficient of the terms with degree 1.
-- `diag::_PackedStorage{T}`: Coefficients of the diagonal recursion (`n == m`), stored per
+- `diag::PackedStorage{T}`: Coefficients of the diagonal recursion (`n == m`), stored per
     degree.
-- `a::_PackedStorage{T}`: Coefficients `a_nm` of the Legendre function recursion, packed
+- `a::PackedStorage{T}`: Coefficients `a_nm` of the Legendre function recursion, packed
     with maximum order `m_max_P`.
-- `b::_PackedStorage{T}`: Coefficients `b_nm` of the Legendre function recursion, packed
+- `b::PackedStorage{T}`: Coefficients `b_nm` of the Legendre function recursion, packed
     with maximum order `m_max_P`.
-- `da::_PackedStorage{T}`: Coefficients `a_nm` of the derivative equation, packed with
+- `da::PackedStorage{T}`: Coefficients `a_nm` of the derivative equation, packed with
     maximum order `m_max`.
-- `db::_PackedStorage{T}`: Coefficients `b_nm` of the derivative equation, packed with
+- `db::PackedStorage{T}`: Coefficients `b_nm` of the derivative equation, packed with
     maximum order `m_max`.
 
 # See Also
@@ -59,9 +59,9 @@ struct LegendreCoefficients{N, T <: AbstractFloat}
     m_max::Int
     m_max_P::Int
     seed::T
-    diag::_PackedStorage{T}
-    a::_PackedStorage{T}
-    b::_PackedStorage{T}
-    da::_PackedStorage{T}
-    db::_PackedStorage{T}
+    diag::PackedStorage{T}
+    a::PackedStorage{T}
+    b::PackedStorage{T}
+    da::PackedStorage{T}
+    db::PackedStorage{T}
 end

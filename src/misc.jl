@@ -115,13 +115,13 @@ degree `n_max` and the maximum order `m_max` per degree (see `_packed_index`).
 end
 
 """
-    _zeros_storage(::Type{T}, len::Int) where T -> _PackedStorage{T}
+    _zeros_storage(::Type{T}, len::Int) where T -> PackedStorage{T}
 
 Create a packed coefficient storage with element type `T` and `len` elements initialized
 to zero.
 """
 function _zeros_storage(::Type{T}, len::Int) where T
-    storage = _PackedStorage{T}(undef, len)
+    storage = PackedStorage{T}(undef, len)
     fill!(storage, zero(T))
     return storage
 end
